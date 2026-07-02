@@ -1640,7 +1640,7 @@
         один из самых счастливых дней нашей жизни — день нашей свадьбы.</p>
       <p class="orn">·</p>
       <p class="note" id="inviteNote">
-        Внутри конверта — ещё несколько бумажек.
+        Внутри конверта — ещё несколько карточек.
         Откройте каждую: там билет, план дня и анкета для вас.</p>
     </div>
   </article>
@@ -1947,7 +1947,7 @@
           p.tabIndex = 0;
           p.setAttribute('role', 'button');
           const tg = p.querySelector('.tag');
-          p.setAttribute('aria-label', (tg ? tg.textContent.trim() : 'бумажка') + ' — открыть');
+          p.setAttribute('aria-label', (tg ? tg.textContent.trim() : 'карточка') + ' — открыть');
         }, i * 150);
       });
       setTimeout(() => { hintPick.style.opacity = .95; tgPlane.classList.add('show'); }, papers.length * 150 + 250);
@@ -2164,7 +2164,7 @@
       `С большой радостью приглашаем ${PRON.acc} разделить с нами ` +
       `один из самых счастливых дней нашей жизни — день нашей свадьбы.`;
     document.getElementById('inviteNote').textContent =
-      `Внутри конверта — ещё несколько бумажек. ${PRON.imp} каждую: ` +
+      `Внутри конверта — ещё несколько карточек. ${PRON.imp} каждую: ` +
       `там билет, план дня и анкета для ${PRON.acc}.`;
     document.getElementById('ticketGuests').textContent = ticketNames;
 
