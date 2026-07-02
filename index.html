@@ -1408,6 +1408,12 @@
     pointer-events: auto;
     animation: planeBob 3.4s ease-in-out infinite;
   }
+  /* пока открыта бумажка — прячем самолётик, чтобы не перекрывал контент и кнопку ✕ */
+  body.paper-open .tg-plane {
+    opacity: 0 !important;
+    pointer-events: none;
+    animation: none;
+  }
 
   .tg-plane img {
     width: 100%;
@@ -1736,9 +1742,9 @@
 </div>
 <div class="hint" id="hintPick">выбирайте бумажку — каждая раскроется</div>
 
-<!-- [ПРАВИТЬ] ссылка на Telegram-канал (пока заглушка) -->
-<a class="tg-plane" id="tgPlane" href="https://t.me/telegram" target="_blank" rel="noopener"
-  aria-label="Наш Telegram-канал">
+<!-- ссылка на Telegram-чат гостей -->
+<a class="tg-plane" id="tgPlane" href="https://t.me/+xYjLm7anijoxNGRi" target="_blank" rel="noopener"
+  aria-label="Наш Telegram-чат">
   <img src="assets/telegram-plane.png" alt="">
   <span class="tg-label">наш канал</span>
 </a>
@@ -1855,6 +1861,7 @@
     hintPick.classList.add('gone');
     hintPick.style.opacity = 0;   /* инлайн перебивал класс .gone — теперь прячем явно */
     backdrop.classList.add('show');
+    document.body.classList.add('paper-open');   /* прячем самолётик Telegram, чтобы не перекрывал бумажку и ✕ */
     const s = fitScale(p);
     p.style.setProperty('--openscale', s);
     p.classList.remove('pile');
@@ -1873,6 +1880,7 @@
     p.style.setProperty('--rot', c.rot + 'deg');
     p.style.setProperty('--scale', PILE_SCALE);
     backdrop.classList.remove('show');
+    document.body.classList.remove('paper-open');   /* вернуть самолётик */
     hintPick.classList.remove('gone');
     hintPick.style.opacity = .95;  /* вернуть подсказку над кучей */
     setTimeout(() => { p.style.zIndex = p._z; }, 600);
