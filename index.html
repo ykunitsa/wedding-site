@@ -1359,6 +1359,7 @@
     position: relative;
     width: 100%;
     height: 100%;
+    -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     transition: transform .9s cubic-bezier(.4, 0, .2, 1);
   }
@@ -1367,13 +1368,15 @@
     transform: rotateY(180deg);
   }
 
+  /* Safari-баг: overflow:hidden на грани с backface-visibility ломает рендер
+     3D-карточки (грань пропадает). Поэтому overflow тут НЕ ставим, а скругление
+     переносим на саму картинку ниже. */
   .p-dress .face {
     position: absolute;
     inset: 0;
-    backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
     border-radius: 9px;
-    overflow: hidden;
     box-shadow: 0 22px 44px rgba(0, 0, 0, .5);
   }
 
@@ -1382,6 +1385,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 9px;
   }
 
   .p-dress .face.back {
@@ -1413,6 +1417,10 @@
     opacity: 0 !important;
     pointer-events: none;
     animation: none;
+  }
+  /* и подсказки не должны просвечивать сквозь открытую бумажку */
+  body.paper-open .hint {
+    opacity: 0 !important;
   }
 
   .tg-plane img {
@@ -1484,8 +1492,46 @@
       top: 4%;
     }
 
+    /* билет — вертикальная раскладка вместо широкой горизонтальной */
     .p-ticket {
-      width: 380px;
+      width: 330px;
+    }
+
+    .p-ticket .sheet {
+      flex-direction: column;
+    }
+
+    .p-ticket .main {
+      border-right: none;
+      border-bottom: 2px dashed rgba(43, 40, 34, .4);
+      padding: 22px 22px 18px;
+    }
+
+    .p-ticket .brand h2 {
+      font-size: 1.5rem;
+    }
+
+    .p-ticket .stub {
+      width: 100%;
+      padding: 14px 12px;
+      gap: 12px;
+    }
+
+    .p-ticket .stub-info {
+      flex-direction: column;
+      gap: 3px;
+      text-align: center;
+    }
+
+    /* текст корешка — горизонтальный, боковые вертикальные надписи убираем */
+    .p-ticket .stub-info b,
+    .p-ticket .stub-info span {
+      writing-mode: horizontal-tb;
+      transform: none;
+    }
+
+    .p-ticket .edge {
+      display: none;
     }
 
     .p-dress {
@@ -1496,6 +1542,37 @@
       width: 88px;
       top: 17%;
       right: 11%;
+    }
+
+    /* анкета на мобильном: во весь экран со скроллом всей карточки,
+       чтобы подпись и кнопка «Заверить» не прятались за внутренним скроллом */
+    .p-form.open {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      max-width: 100%;
+      transform: none !important;
+      top: 0 !important;
+      left: 0 !important;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 48px 10px 24px;
+    }
+
+    .p-form.open .sheet {
+      max-height: none;
+      min-height: 0;
+      width: 100%;
+    }
+
+    /* ✕ закрепляем поверх — чтобы не уезжала при скролле анкеты */
+    .p-form.open .close {
+      position: fixed;
+      top: 12px;
+      right: 12px;
     }
   }
 </style>
