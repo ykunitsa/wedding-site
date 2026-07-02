@@ -1112,14 +1112,29 @@ function setSig(text){
 signZ.querySelector('.date').textContent =
   new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
 
-let sealed = false;
+/* режим анкеты: 'edit' — можно заполнять, 'view' — ответ уже дан, поля заблокированы */
+let mode = 'edit';
+let savedAt = null;
+
+/* ── слой хранения ответов ──────────────────────────────────────
+   Пока это localStorage (мок «вернувшегося гостя»). Позже эти две
+   функции станут запросами к Supabase: get_guest вернёт прошлый
+   ответ, submit_rsvp его сохранит — остальной код не изменится. */
+const RSVP_KEY = t => 'rsvp:' + t;
+function loadResponse(token){
+  try { return JSON.parse(localStorage.getItem(RSVP_KEY(token))); }
+  catch(_){ return null; }
+}
+function saveResponse(payload){
+  localStorage.setItem(RSVP_KEY(payload.token), JSON.stringify(payload));
+}
 
 /* обработчик всех групп-переключателей: attend (по человеку), transfer, stay */
 document.querySelectorAll('.p-form .choice').forEach(group=>{
   group.querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click', e=>{
       e.stopPropagation();
-      if(sealed) return;
+      if(mode==='view') return;
       group.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
       btn.setAttribute('aria-pressed','true');
       msg.textContent='';
@@ -1151,12 +1166,74 @@ form.querySelectorAll('input,textarea,button').forEach(el=>{
   el.addEventListener('click', e=>e.stopPropagation());
 });
 
-/* заверение анкеты — по клику (submit формы в песочнице блокируется) */
+/* блокировка / разблокировка полей анкеты */
+function lockFields(lock){
+  document.querySelectorAll('#rsvp textarea,#rsvp .choice button')
+    .forEach(el=>{ el.disabled = lock; el.style.opacity = lock ? .75 : ''; });
+}
+
+/* выбрать нужную кнопку в группе (для восстановления прошлого ответа) */
+function pressChoice(sel){
+  const b = document.querySelector(sel);
+  if(!b) return;
+  b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true');
+}
+
+/* восстановить прошлый ответ в интерфейсе */
+function prefill(resp){
+  (resp.persons||[]).forEach((p,i)=>{
+    const val = p.attending ? 'yes' : 'no';
+    answers.persons[i] = val;
+    pressChoice(`#attendList .choice[data-person="${i}"] button[data-val="${val}"]`);
+  });
+  if(resp.transfer){ answers.transfer = resp.transfer;
+    pressChoice(`.choice[data-group="transfer"] button[data-val="${resp.transfer}"]`); }
+  if(resp.stay && guest.showStay){ answers.stay = resp.stay;
+    pressChoice(`.choice[data-group="stay"] button[data-val="${resp.stay}"]`); }
+  if(resp.menu) document.getElementById('gmenu').value = resp.menu;
+  const coming = anyComing();
+  ifYes.classList.toggle('show', coming);
+  if(coming){ setSig(names); signZ.classList.add('signed'); }
+}
+
+/* режим просмотра: ответ дан, поля заблокированы, кнопка → «Изменить» */
+function enterView(justSaved){
+  mode = 'view';
+  lockFields(true);
+  const coming = anyComing();
+  stamp.querySelector('.big').innerHTML = coming
+      ? 'ПОДТВЕРЖ-<br>ДЕНО' : 'ПРИНЯТО<br>К СВЕДЕНИЮ';
+  stamp.classList.add('show');
+  sendBtn.textContent = 'Изменить ответ';
+  if(justSaved){
+    msg.innerHTML = coming
+      ? 'Спасибо! Ваш ответ записан — уже считаем дни до встречи. ❥'
+      : 'Спасибо, что дали знать. Будем скучать ❥';
+  } else {
+    const when = savedAt
+      ? ' ' + new Date(savedAt).toLocaleDateString('ru-RU',{day:'numeric',month:'long'})
+      : '';
+    msg.textContent = `Вы уже отвечали${when}. Ответ можно изменить.`;
+  }
+}
+
+/* режим редактирования: поля активны, кнопка → «Заверить / Обновить» */
+function enterEdit(){
+  mode = 'edit';
+  lockFields(false);
+  stamp.classList.remove('show');
+  sendBtn.textContent = savedAt ? 'Обновить ответ' : 'Заверить анкету';
+  msg.textContent = '';
+}
+
+/* кнопка: в просмотре — разблокировать поля; в редактировании — сохранить */
 const sendBtn = document.getElementById('sendBtn');
 
 sendBtn.addEventListener('click', e=>{
   e.stopPropagation();
-  if(sealed) return;
+
+  if(mode === 'view'){ enterEdit(); return; }
 
   /* по каждому приглашённому должна стоять отметка */
   if(answers.persons.some(v=>!v)){
@@ -1174,24 +1251,23 @@ sendBtn.addEventListener('click', e=>{
     persons: guest.persons.map((p,i)=>({ name:p.name, attending: answers.persons[i]==='yes' })),
     transfer: coming ? answers.transfer : '',
     stay:     (coming && guest.showStay) ? answers.stay : '',
-    menu:     coming ? document.getElementById('gmenu').value.trim() : ''
+    menu:     coming ? document.getElementById('gmenu').value.trim() : '',
+    updatedAt: new Date().toISOString()
   };
+  saveResponse(payload);
+  savedAt = payload.updatedAt;
   console.log('RSVP payload (мок, пойдёт в Supabase):', payload);
 
-  /* штамп впечатывается и остаётся на бланке */
-  stamp.querySelector('.big').innerHTML = coming
-      ? 'ПОДТВЕРЖ-<br>ДЕНО' : 'ПРИНЯТО<br>К СВЕДЕНИЮ';
-  stamp.classList.add('show');
-
-  /* фиксируем анкету */
-  sealed = true;
-  sendBtn.disabled = true;
-  sendBtn.textContent = '✓ Анкета заверена';
-  msg.innerHTML = coming
-      ? 'Спасибо! Ваш ответ записан — уже считаем дни до встречи. ❥'
-      : 'Спасибо, что дали знать. Будем скучать ❥';
-  /* блокируем поля от изменений после заверения */
-  document.querySelectorAll('#rsvp textarea,#rsvp .choice button')
-    .forEach(el=>{ el.disabled=true; el.style.opacity=.75; });
+  enterView(true);
 });
+
+/* ── старт анкеты: если гость уже отвечал по этой ссылке — показать ответ ── */
+const savedResp = loadResponse(guest.token);
+if(savedResp){
+  savedAt = savedResp.updatedAt || null;
+  prefill(savedResp);
+  enterView(false);
+} else {
+  enterEdit();
+}
 </script>
