@@ -1,2 +1,4 @@
 # локальные конфиги Claude Code / превью-сервера
 .claude/
+# мусор macOS
+.DS_Store
