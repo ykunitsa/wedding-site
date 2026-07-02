@@ -1347,6 +1347,8 @@
     overflow: visible;
     aspect-ratio: 939/600;
     border-radius: 0;
+    -webkit-perspective: 1500px;
+    perspective: 1500px;
   }
 
   .p-dress.open .sheet {
@@ -1354,20 +1356,33 @@
     max-height: none;
   }
 
+  /* КЛЮЧЕВОЙ ФИКС SAFARI: тянемся по родителю через inset, а НЕ height:100%.
+     Safari не резолвит процентную высоту относительно высоты из aspect-ratio,
+     из-за чего .flip схлопывался в 0 и карточка пропадала. */
   .p-dress .flip {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    transition: -webkit-transform .9s cubic-bezier(.4, 0, .2, 1);
+    transition: transform .9s cubic-bezier(.4, 0, .2, 1);
   }
 
-  /* без всякого 3D — две стороны наложены и меняются кросс-фейдом.
-     Работает в любом браузере, включая Safari (где 3D-переворот пропадал). */
+  /* при открытии карточка переворачивается на оборотную сторону (пожелания) */
+  .p-dress.open .flip {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+  }
+
+  /* overflow на грани НЕ ставим (он ломает backface в Safari) — скругление
+     переносим на саму картинку ниже */
   .p-dress .face {
     position: absolute;
     inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
     border-radius: 9px;
     box-shadow: 0 22px 44px rgba(0, 0, 0, .5);
-    transition: opacity .7s ease;
   }
 
   .p-dress .face img {
@@ -1378,18 +1393,9 @@
     border-radius: 9px;
   }
 
-  /* по умолчанию видна лицевая сторона, оборотная скрыта */
   .p-dress .face.back {
-    opacity: 0;
-  }
-
-  /* при открытии — плавно показываем оборотную (пожелания) */
-  .p-dress.open .face.front {
-    opacity: 0;
-  }
-
-  .p-dress.open .face.back {
-    opacity: 1;
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
   }
 
   /* ── бумажный самолётик → Telegram-канал ── */
