@@ -1346,7 +1346,6 @@
     box-shadow: none;
     overflow: visible;
     aspect-ratio: 939/600;
-    perspective: 1500px;
     border-radius: 0;
   }
 
@@ -1359,25 +1358,16 @@
     position: relative;
     width: 100%;
     height: 100%;
-    -webkit-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-    transition: transform .9s cubic-bezier(.4, 0, .2, 1);
   }
 
-  .p-dress.open .flip {
-    transform: rotateY(180deg);
-  }
-
-  /* Safari-баг: overflow:hidden на грани с backface-visibility ломает рендер
-     3D-карточки (грань пропадает). Поэтому overflow тут НЕ ставим, а скругление
-     переносим на саму картинку ниже. */
+  /* без всякого 3D — две стороны наложены и меняются кросс-фейдом.
+     Работает в любом браузере, включая Safari (где 3D-переворот пропадал). */
   .p-dress .face {
     position: absolute;
     inset: 0;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
     border-radius: 9px;
     box-shadow: 0 22px 44px rgba(0, 0, 0, .5);
+    transition: opacity .7s ease;
   }
 
   .p-dress .face img {
@@ -1388,8 +1378,18 @@
     border-radius: 9px;
   }
 
+  /* по умолчанию видна лицевая сторона, оборотная скрыта */
   .p-dress .face.back {
-    transform: rotateY(180deg);
+    opacity: 0;
+  }
+
+  /* при открытии — плавно показываем оборотную (пожелания) */
+  .p-dress.open .face.front {
+    opacity: 0;
+  }
+
+  .p-dress.open .face.back {
+    opacity: 1;
   }
 
   /* ── бумажный самолётик → Telegram-канал ── */
@@ -1494,7 +1494,7 @@
 
     /* билет — вертикальная раскладка вместо широкой горизонтальной */
     .p-ticket {
-      width: 330px;
+      width: 300px;
     }
 
     .p-ticket .sheet {
@@ -1504,11 +1504,34 @@
     .p-ticket .main {
       border-right: none;
       border-bottom: 2px dashed rgba(43, 40, 34, .4);
-      padding: 22px 22px 18px;
+      padding: 34px 20px 30px;
     }
 
     .p-ticket .brand h2 {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
+    }
+
+    /* больше воздуха по вертикали — билет вытянутый */
+    .p-ticket .addr {
+      padding: 11px 0;
+      margin-top: 12px;
+    }
+
+    .p-ticket .feature {
+      padding: 26px 0 24px;
+    }
+
+    .p-ticket .cols {
+      padding-top: 18px;
+    }
+
+    .p-ticket .mapbanner {
+      height: 88px;
+      margin-top: 22px;
+    }
+
+    .p-ticket .foot {
+      padding-top: 20px;
     }
 
     .p-ticket .stub {
@@ -1559,7 +1582,7 @@
       justify-content: center;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding: 48px 10px 24px;
+      padding: 12px 10px 24px;
     }
 
     .p-form.open .sheet {
@@ -1568,11 +1591,17 @@
       width: 100%;
     }
 
-    /* ✕ закрепляем поверх — чтобы не уезжала при скролле анкеты */
+    /* ✕ закреплён поверх (не уезжает при скролле) и лежит на самом листике,
+       где хорошо виден — а не в тёмном отступе сверху */
     .p-form.open .close {
       position: fixed;
-      top: 12px;
-      right: 12px;
+      top: 18px;
+      right: 20px;
+      width: 38px;
+      height: 38px;
+      background: rgba(37, 53, 42, .16);
+      color: #25352a;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
     }
   }
 </style>
@@ -1817,7 +1846,7 @@
 <div class="hint" id="hintOpen">
   нажмите на конверт<span class="arrow">✦</span>
 </div>
-<div class="hint" id="hintPick">выбирайте бумажку — каждая раскроется</div>
+<div class="hint" id="hintPick">кликайте на карточки — каждая раскроется</div>
 
 <!-- ссылка на Telegram-чат гостей -->
 <a class="tg-plane" id="tgPlane" href="https://t.me/+xYjLm7anijoxNGRi" target="_blank" rel="noopener"
