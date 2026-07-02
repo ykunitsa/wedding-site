@@ -18,593 +18,1461 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="font" type="font/ttf" href="assets/PushkinC.ttf" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Commissioner:wght@300;400;500;600;700;800;900&display=block" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Commissioner:wght@300;400;500;600;700;800;900&display=block"
+  rel="stylesheet">
 
 <style>
-@font-face{
-  font-family:'PushkinC';
-  src:url('assets/PushkinC.ttf') format('truetype');
-  font-display:block;
-}
-@font-face{
-  font-family:'Princess Diana';
-  src:url('assets/Princess-Diana.ttf') format('truetype');
-  font-display:block;
-}
-:root{
-  /* ─── ШРИФТЫ ─── меняй здесь (+ обнови <link> с Google Fonts выше) */
-  --font-script:'Caveat',cursive;            /* рукописный: заголовки, имена, даты */
-  --font-serif:'Cormorant Garamond',serif;   /* серифный: основной текст */
-  --font-sans:'Commissioner',sans-serif;     /* гротеск: подписи-капс, кнопки */
+  @font-face {
+    font-family: 'PushkinC';
+    src: url('assets/PushkinC.ttf') format('truetype');
+    font-display: block;
+  }
 
-  --bg-1:#c4b294; --bg-2:#d8cab0;
-  --cream:#f3ead7; --cream-2:#ece0c6; --cream-3:#e2d2b0;
-  --kraft:#d8c39c;
-  --ink:#ad3641; --ink-deep:#7f2630;
-  --brown:#3b2c25; --brown-soft:#5c473b;
-  --ticket:#fbfbf9; --ticket-blue:#3f5168; --ticket-ink:#2c3a4d;
-  --note:#edf1e9; --note-line:#c2cdb6; --note-margin:#d08c72;
-  --gold:#c79a4e;
-  --tape:rgba(232,217,182,.6);
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;}
-body{
-  background:
-    linear-gradient(rgba(90,86,74,.14),rgba(70,68,60,.26)),
-    url("assets/background.png") center/cover no-repeat fixed,
-    #b9bcae;
-  font-family:var(--font-serif);
-  color:var(--brown);
-  overflow:hidden;
-  -webkit-font-smoothing:antialiased;
-  -webkit-tap-highlight-color:transparent;
-  /* пока шрифты не загружены — прячем контент, чтобы не было видно подмены */
-  opacity:0;transition:opacity .45s ease;
-}
-body.fonts-ready{opacity:1;}
-/* зерно + виньетка */
-body::after{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
-  background:radial-gradient(130% 100% at 50% 40%,transparent 58%,rgba(70,45,30,.22));
-}
-.grain{
-  position:fixed;inset:0;pointer-events:none;z-index:61;opacity:.5;
-  mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.45'/></svg>");
-}
+  @font-face {
+    font-family: 'Princess Diana';
+    src: url('assets/Princess-Diana.ttf') format('truetype');
+    font-display: block;
+  }
 
-.stage{position:fixed;inset:0;}
+  :root {
+    /* ─── ШРИФТЫ ─── меняй здесь (+ обнови <link> с Google Fonts выше) */
+    --font-script: 'Caveat', cursive;
+    /* рукописный: заголовки, имена, даты */
+    --font-serif: 'Cormorant Garamond', serif;
+    /* серифный: основной текст */
+    --font-sans: 'Commissioner', sans-serif;
+    /* гротеск: подписи-капс, кнопки */
 
-/* ─── подсказки ─────────────────────────────────────────────── */
-.hint{
-  position:fixed;left:0;right:0;text-align:center;z-index:30;
-  font-family:var(--font-sans);font-weight:600;color:#f4ecdb;
-  letter-spacing:.34em;text-transform:uppercase;
-  text-shadow:0 1px 6px rgba(50,46,38,.45);
-  pointer-events:none;transition:opacity .6s ease;
-}
-#hintOpen{bottom:13%;font-size:.82rem;}
-#hintOpen .arrow{display:block;font-size:1.4rem;letter-spacing:0;margin-top:8px;animation:bob 1.8s ease-in-out infinite;}
-#hintPick{top:7%;font-size:.82rem;opacity:0;}
-.hint.gone{opacity:0;}
-@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+    --bg-1: #c4b294;
+    --bg-2: #d8cab0;
+    --cream: #f3ead7;
+    --cream-2: #ece0c6;
+    --cream-3: #e2d2b0;
+    --kraft: #d8c39c;
+    --ink: #ad3641;
+    --ink-deep: #7f2630;
+    --brown: #3b2c25;
+    --brown-soft: #5c473b;
+    --ticket: #fbfbf9;
+    --ticket-blue: #3f5168;
+    --ticket-ink: #2c3a4d;
+    --note: #edf1e9;
+    --note-line: #c2cdb6;
+    --note-margin: #d08c72;
+    --gold: #c79a4e;
+    --tape: rgba(232, 217, 182, .6);
+  }
 
-.title-top{
-  position:fixed;top:5.5%;left:0;right:0;text-align:center;z-index:25;
-  pointer-events:none;transition:opacity .5s ease;
-}
-.title-top .label{
-  font-family:var(--font-sans);font-size:.78rem;font-weight:600;
-  letter-spacing:.4em;text-transform:uppercase;color:#eee4d0;
-  text-shadow:0 1px 6px rgba(50,46,38,.45);
-}
-.title-top h1{
-  font-family:'Princess Diana',var(--font-script);font-weight:400;
-  font-size:clamp(3rem,9vw,4.8rem);color:#f6eedb;line-height:.9;
-  padding:30px;
-  text-shadow:0 2px 10px rgba(45,42,34,.4);
-}
-.title-top.gone{opacity:0;}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-/* ─── КОНВЕРТ ───────────────────────────────────────────────── */
-.envelope{
-  position:fixed;left:50%;top:46%;
-  width:560px;height:560px;
-  transform:translate(-50%,-50%);
-  z-index:8;cursor:pointer;
-  transition:transform .9s cubic-bezier(.5,0,.2,1),opacity .7s ease;
-}
-.envelope.nudge{animation:nudge 2.4s ease-in-out infinite;}
-@keyframes nudge{0%,92%,100%{transform:translate(-50%,-50%) rotate(0);}
-  95%{transform:translate(-50%,-51%) rotate(-1.4deg);}
-  98%{transform:translate(-50%,-50.5%) rotate(1deg);}}
-.envelope.opened{cursor:default;transform:translate(-50%,-53%) scale(1);}
+  html,
+  body {
+    height: 100%;
+  }
 
-/* два реальных фото конверта — плавный кроссфейд закрытый → открытый */
-.env-img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:contain;
-  filter:drop-shadow(0 24px 30px rgba(60,35,20,.4));
-  transition:opacity .6s ease;
-  -webkit-user-drag:none;user-select:none;pointer-events:none;
-}
-.env-open{opacity:0;}
-.envelope.opened .env-closed{opacity:0;}
-.envelope.opened .env-open{opacity:1;}
+  body {
+    background:
+      linear-gradient(rgba(90, 86, 74, .14), rgba(70, 68, 60, .26)),
+      url("assets/background.png") center/cover no-repeat fixed,
+      #b9bcae;
+    font-family: var(--font-serif);
+    color: var(--brown);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    /* пока шрифты не загружены — прячем контент, чтобы не было видно подмены */
+    opacity: 0;
+    transition: opacity .45s ease;
+  }
 
-/* ─── БУМАЖКИ (общий каркас) ────────────────────────────────── */
-/* регистрируем кастомные свойства, иначе transform по var() не анимируется плавно */
-@property --scale{syntax:'<number>';inherits:false;initial-value:0.14;}
-@property --rot{syntax:'<angle>';inherits:false;initial-value:0deg;}
-.paper{
-  position:fixed;top:46%;left:50%;
-  --rot:0deg;--scale:.14;
-  transform:translate(-50%,-50%) rotate(var(--rot)) scale(var(--scale));
-  opacity:0;z-index:10;pointer-events:none;
-  /* transform НЕ анимируем переходом: значение зависит от var(--scale),
+  body.fonts-ready {
+    opacity: 1;
+  }
+
+  /* зерно + виньетка */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    background: radial-gradient(130% 100% at 50% 40%, transparent 58%, rgba(70, 45, 30, .22));
+  }
+
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 61;
+    opacity: .5;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.45'/></svg>");
+  }
+
+  .stage {
+    position: fixed;
+    inset: 0;
+  }
+
+  /* ─── подсказки ─────────────────────────────────────────────── */
+  .hint {
+    position: fixed;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 30;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: #f4ecdb;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 6px rgba(50, 46, 38, .45);
+    pointer-events: none;
+    transition: opacity .6s ease;
+  }
+
+  #hintOpen {
+    bottom: 13%;
+    font-size: .82rem;
+  }
+
+  #hintOpen .arrow {
+    display: block;
+    font-size: 1.4rem;
+    letter-spacing: 0;
+    margin-top: 8px;
+    animation: bob 1.8s ease-in-out infinite;
+  }
+
+  #hintPick {
+    top: 7%;
+    font-size: .82rem;
+    opacity: 0;
+  }
+
+  .hint.gone {
+    opacity: 0;
+  }
+
+  @keyframes bob {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(8px);
+    }
+  }
+
+  .title-top {
+    position: fixed;
+    top: 5.5%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 25;
+    pointer-events: none;
+    transition: opacity .5s ease;
+  }
+
+  .title-top .label {
+    font-family: var(--font-sans);
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .4em;
+    text-transform: uppercase;
+    color: #eee4d0;
+    text-shadow: 0 1px 6px rgba(50, 46, 38, .45);
+  }
+
+  .title-top h1 {
+    font-family: 'Princess Diana', var(--font-script);
+    font-weight: 400;
+    font-size: clamp(3rem, 9vw, 4.8rem);
+    color: #f6eedb;
+    line-height: .9;
+    padding: 30px;
+    text-shadow: 0 2px 10px rgba(45, 42, 34, .4);
+  }
+
+  .title-top.gone {
+    opacity: 0;
+  }
+
+  /* ─── КОНВЕРТ ───────────────────────────────────────────────── */
+  .envelope {
+    position: fixed;
+    left: 50%;
+    top: 46%;
+    width: 560px;
+    height: 560px;
+    transform: translate(-50%, -50%);
+    z-index: 8;
+    cursor: pointer;
+    transition: transform .9s cubic-bezier(.5, 0, .2, 1), opacity .7s ease;
+  }
+
+  .envelope.nudge {
+    animation: nudge 2.4s ease-in-out infinite;
+  }
+
+  @keyframes nudge {
+
+    0%,
+    92%,
+    100% {
+      transform: translate(-50%, -50%) rotate(0);
+    }
+
+    95% {
+      transform: translate(-50%, -51%) rotate(-1.4deg);
+    }
+
+    98% {
+      transform: translate(-50%, -50.5%) rotate(1deg);
+    }
+  }
+
+  .envelope.opened {
+    cursor: default;
+    transform: translate(-50%, -53%) scale(1);
+  }
+
+  /* два реальных фото конверта — плавный кроссфейд закрытый → открытый */
+  .env-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 24px 30px rgba(60, 35, 20, .4));
+    transition: opacity .6s ease;
+    -webkit-user-drag: none;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .env-open {
+    opacity: 0;
+  }
+
+  .envelope.opened .env-closed {
+    opacity: 0;
+  }
+
+  .envelope.opened .env-open {
+    opacity: 1;
+  }
+
+  /* ─── БУМАЖКИ (общий каркас) ────────────────────────────────── */
+  /* регистрируем кастомные свойства, иначе transform по var() не анимируется плавно */
+  @property --scale {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0.14;
+  }
+
+  @property --rot {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  .paper {
+    position: fixed;
+    top: 46%;
+    left: 50%;
+    --rot: 0deg;
+    --scale: .14;
+    transform: translate(-50%, -50%) rotate(var(--rot)) scale(var(--scale));
+    opacity: 0;
+    z-index: 10;
+    pointer-events: none;
+    /* transform НЕ анимируем переходом: значение зависит от var(--scale),
      а такой transition не всегда доигрывает и застревает на старте.
      Масштаб ставится мгновенно, движение к центру даёт top/left/opacity. */
-  transition:top .85s cubic-bezier(.34,1.1,.4,1),
-             left .85s cubic-bezier(.34,1.1,.4,1),
-             opacity .5s ease;
-  will-change:transform,top,left;
-}
-.paper.pile{pointer-events:auto;cursor:pointer;}
-.paper.pile:hover,.paper.pile:focus-visible{--scale:.535;}
-.paper.pile:focus-visible{outline:3px solid var(--ink);outline-offset:8px;border-radius:4px;}
-.envelope:focus-visible{outline:3px solid var(--ink-deep);outline-offset:10px;border-radius:9px;}
-:focus:not(:focus-visible){outline:none;}
-.paper.open{z-index:200;cursor:default;pointer-events:auto;}
-.paper.open:hover{--scale:var(--openscale);}
+    transition: top .85s cubic-bezier(.34, 1.1, .4, 1),
+      left .85s cubic-bezier(.34, 1.1, .4, 1),
+      opacity .5s ease;
+    will-change: transform, top, left;
+  }
 
-/* содержимое каждой бумажки */
-.sheet{position:relative;overflow:hidden;}
-.paper.open .sheet{max-height:90vh;overflow-y:auto;}
+  .paper.pile {
+    pointer-events: auto;
+    cursor: pointer;
+  }
 
-/* ярлычок-подпись в куче */
-.tag{
-  position:absolute;z-index:3;
-  font-family:var(--font-sans);font-weight:600;font-size:.68rem;
-  letter-spacing:.26em;text-transform:uppercase;color:#111;
-  background:var(--tape);padding:6px 16px;
-  box-shadow:0 3px 7px rgba(0,0,0,.2);
-  transform:rotate(-4deg);transition:opacity .3s ease;
-  pointer-events:none;
-}
-.paper.open .tag{opacity:0;}
+  .paper.pile:hover,
+  .paper.pile:focus-visible {
+    --scale: .535;
+  }
 
-/* кнопка закрыть */
-.close{
-  position:absolute;top:10px;right:10px;z-index:9;
-  width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
-  background:rgba(60,44,37,.16);color:var(--brown);
-  font-family:var(--font-sans);font-size:1.2rem;line-height:1;
-  opacity:0;transition:opacity .35s ease .2s,background .2s;
-}
-.paper.open .close{opacity:1;}
-.close:hover{background:rgba(60,44,37,.32);}
+  .paper.pile:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 8px;
+    border-radius: 4px;
+  }
 
-/* затемнение фона при открытой бумажке */
-.backdrop{
-  position:fixed;inset:0;z-index:150;
-  background:rgba(20,26,33,.66);backdrop-filter:blur(2px);
-  opacity:0;pointer-events:none;transition:opacity .5s ease;
-}
-.backdrop.show{opacity:1;pointer-events:auto;}
+  .envelope:focus-visible {
+    outline: 3px solid var(--ink-deep);
+    outline-offset: 10px;
+    border-radius: 9px;
+  }
 
-/* ════ полароид — наши фото (реальная рамка PNG) ════ */
-.p-photo{width:320px;}
-.p-photo .sheet{
-  position:relative;width:100%;aspect-ratio:577/706;
-  background:none;padding:0;border-radius:0;box-shadow:none;
-  overflow:visible;
-}
-.p-photo .pic{
-  position:absolute;left:6.76%;top:6.09%;width:86.83%;height:73.09%;
-  overflow:hidden;z-index:1;background:#e7ddcb;
-}
-.p-photo .pic img{width:100%;height:100%;object-fit:cover;display:block;}
-.p-photo .frame{
-  position:absolute;inset:0;width:100%;height:100%;z-index:2;
-  pointer-events:none;-webkit-user-drag:none;
-  filter:drop-shadow(0 18px 30px rgba(0,0,0,.4));
-}
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
 
-/* ════ 1. ПРИГЛАШЕНИЕ — крафт-карточка с рваным краем ════ */
-.p-invite{width:400px;}
-.p-invite .sheet{
-  aspect-ratio:1200/1500;
-  padding:17% 20%;color:#111;
-  background:none;box-shadow:none;
-  display:flex;flex-direction:column;justify-content:center;
-}
-.p-invite .close{color:#3a3a3a;top:16%;right:18%;}
-.p-invite .sheet::before{
-  content:"";position:absolute;inset:0;z-index:-1;
-  background:url("assets/invite-doily.png") center/contain no-repeat;
-}
-.p-invite .seal{
-  position:absolute;top:-16px;left:50%;transform:translateX(-50%) rotate(-8deg);
-  width:50px;height:50px;border-radius:50%;
-  background:radial-gradient(circle at 38% 34%,#c5454d,var(--ink-deep) 78%);
-  box-shadow:0 4px 9px rgba(0,0,0,.35);
-  display:flex;align-items:center;justify-content:center;
-  color:#f1d6c1;font-family:var(--font-script);font-size:1.5rem;
-}
-.p-invite .kick{
-  text-align:center;font-family:var(--font-sans);
-  font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;
-  color:var(--ink);margin:6px 0 4px;
-}
-.p-invite h2{
-  font-family:'Princess Diana',var(--font-script);font-weight:400;font-size:1.95rem;
-  color:#111;text-align:center;line-height:1;
-}
-.p-invite .names{
-  font-family:var(--font-script);font-size:2.4rem;text-align:center;
-  color:var(--brown);margin:.1em 0;
-}
-.p-invite .names .amp{color:var(--gold);font-size:1.5rem;}
-.p-invite p{text-align:center;font-size:.92rem;margin:.4em 0;line-height:1.5;color:#111;}
-.p-invite .note{font-style:italic;color:#333;
-  font-size:.72rem;line-height:1.45;margin-top:1em;padding-top:0;}
-.p-invite .note + *{margin-top:0;}
-.p-invite .orn{text-align:center;color:#111;letter-spacing:.3em;margin:.3em 0;}
+  .paper.open {
+    z-index: 200;
+    cursor: default;
+    pointer-events: auto;
+  }
 
-/* ════ 2. БИЛЕТ — локация / дата / место ════ */
-/* билет в стиле винтажного киношного билета */
-.p-ticket{width:720px;font-family:var(--font-sans);--tk-ink:#25352a;--tk-red:#2f5a3a;}
-.p-ticket .sheet{
-  position:relative;display:flex;align-items:stretch;color:var(--tk-ink);
-  background:radial-gradient(125% 135% at 50% 45%,#f7f0dd 52%,#ece1c6 100%);
-  border-radius:14px;
-  box-shadow:0 22px 44px rgba(0,0,0,.42),inset 0 0 40px rgba(150,130,90,.16);
-}
-/* левая вертикальная надпись на кромке */
-.p-ticket .edge{
-  position:absolute;top:50%;z-index:2;
-  writing-mode:vertical-rl;transform:translateY(-50%) rotate(180deg);
-  font-size:.56rem;letter-spacing:.16em;color:rgba(43,40,34,.7);
-  white-space:nowrap;text-transform:uppercase;
-}
-.p-ticket .edge-l{left:9px;}
-.p-ticket .edge-r{right:9px;}
+  .paper.open:hover {
+    --scale: var(--openscale);
+  }
 
-.p-ticket .main{
-  flex:1;padding:24px 30px 20px 40px;
-  display:flex;flex-direction:column;
-  border-right:2px dashed rgba(43,40,34,.4);
-}
-.p-ticket .brand{
-  display:flex;align-items:center;justify-content:center;gap:18px;
-}
-.p-ticket .brand h2{
-  font-family:var(--font-serif);font-weight:600;
-  font-size:2rem;letter-spacing:.03em;color:var(--tk-ink);
-  text-align:center;white-space:nowrap;line-height:1;
-}
-.p-ticket .star{color:var(--tk-ink);font-size:1.05rem;}
-.p-ticket .addr{
-  text-align:center;font-size:.72rem;letter-spacing:.02em;color:var(--tk-ink);
-  padding:7px 0;margin-top:8px;
-  border-top:1px solid rgba(43,40,34,.5);
-  border-bottom:1px solid rgba(43,40,34,.5);
-}
-.p-ticket .addr a{color:var(--tk-ink);text-decoration:underline;text-underline-offset:2px;}
-.p-ticket .feature{text-align:center;padding:16px 0 15px;}
-.p-ticket .ft-title{
-  font-family:var(--font-sans);font-weight:700;
-  font-size:1.5rem;letter-spacing:.03em;color:var(--tk-red);line-height:1;
-}
-.p-ticket .ft-sub{
-  font-style:italic;font-size:.76rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--tk-ink);margin-top:6px;
-}
-.p-ticket .cols{
-  display:flex;justify-content:space-between;gap:8px;
-  border-top:1px solid rgba(43,40,34,.5);padding-top:12px;
-}
-.p-ticket .col{flex:1;text-align:center;display:flex;flex-direction:column;gap:4px;}
-.p-ticket .cl{font-size:.6rem;letter-spacing:.16em;color:var(--tk-ink);font-weight:600;}
-.p-ticket .cv{font-family:var(--font-serif);font-size:1.05rem;color:var(--tk-ink);}
-.p-ticket .foot{
-  display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:14px;
-}
-.p-ticket .guests{
-  margin-left:auto;font-family:var(--font-serif);font-weight:700;
-  font-size:1.2rem;color:var(--tk-red);
-}
-.p-ticket .mapbanner{
-  display:flex;align-items:center;justify-content:center;
-  height:76px;margin-top:16px;border-radius:10px;overflow:hidden;
-  text-decoration:none;
-  background:linear-gradient(rgba(28,38,28,.26),rgba(28,38,28,.42)),url("assets/sunflowers.jpg") center/cover;
-  box-shadow:0 5px 13px rgba(0,0,0,.24);
-  transition:filter .25s ease,box-shadow .25s ease;
-}
-.p-ticket .mapbanner:hover{filter:brightness(1.12);box-shadow:0 8px 20px rgba(0,0,0,.32);}
-.p-ticket .mapbanner span{
-  font-family:var(--font-sans);font-weight:700;font-size:.9rem;
-  letter-spacing:.14em;text-transform:uppercase;color:#fdf6e8;
-  text-shadow:0 1px 6px rgba(0,0,0,.55);
-}
-/* отрывной корешок */
-.p-ticket .stub{
-  width:158px;flex:none;position:relative;
-  display:flex;align-items:center;justify-content:center;gap:16px;
-  padding:18px 12px;
-}
-.p-ticket .admit-v{
-  writing-mode:vertical-rl;transform:rotate(180deg);
-  font-weight:700;letter-spacing:.22em;font-size:.82rem;color:var(--tk-red);
-  white-space:nowrap;
-}
-.p-ticket .stub-info{
-  display:flex;align-items:center;gap:14px;
-}
-.p-ticket .stub-info b{
-  writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;
-  font-family:var(--font-serif);font-weight:700;font-size:1.05rem;
-  letter-spacing:.06em;color:var(--tk-ink);
-}
-.p-ticket .stub-info span{
-  writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;
-  font-size:.7rem;letter-spacing:.08em;color:var(--tk-ink);
-}
+  /* содержимое каждой бумажки */
+  .sheet {
+    position: relative;
+    overflow: hidden;
+  }
 
-/* ════ 3. РАСПИСАНИЕ — лист из блокнота на пружине ════ */
-.p-sched{width:500px;}
-.p-sched .sheet{
-  aspect-ratio:1/1;
-  background:url("assets/sticker.png") center/contain no-repeat;
-  padding:25% 22.5% 21% 26%;
-  box-shadow:none;
-  display:flex;flex-direction:column;justify-content:center;
-}
-.p-sched .tag{top:24%;left:24%;}
-.p-sched .close{top:23.5%;right:25%;}
-.p-sched h2{
-  font-family:'PushkinC',var(--font-script);font-weight:400;font-size:1.6rem;
-  color:#111;line-height:1;margin-bottom:.5em;text-align:center;white-space:nowrap;
-}
-.p-sched .item{
-  display:flex;gap:9px;align-items:baseline;
-  padding:3px 0;
-}
-.p-sched .item .t{
-  font-family:'PushkinC',var(--font-script);font-size:1.2rem;font-weight:400;
-  color:#111;width:48px;flex:none;line-height:1;
-}
-.p-sched .item .d{
-  font-family:var(--font-serif);font-style:italic;font-size:1rem;color:#111;
-  line-height:1.12;
-}
-.p-sched .item .d small{
-  display:block;font-style:italic;font-size:.74rem;color:#111;
-  opacity:.72;line-height:1.15;
-}
+  .paper.open .sheet {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
 
-/* ════ 4. АНКЕТА — официальный бланк, который подписывают ════ */
-/* ════ 4. АНКЕТА — в стиле минималистичного инвойса ════ */
-.p-form{width:480px;--iv-bg:#edf1e0;--iv-ink:#25352a;--iv-mut:#5c6b5b;--iv-line:#25352a;}
-.p-form .sheet{
-  background:var(--iv-bg);
-  padding:30px 34px 24px;
-  box-shadow:0 22px 40px rgba(0,0,0,.42);
-  border-radius:3px;
-  display:flex;flex-direction:column;min-height:670px;
-  font-family:var(--font-sans);color:var(--iv-ink);
-}
-.p-form .sheet::before{border:none;}
-.p-form #rsvp{display:flex;flex-direction:column;flex:1;}
-/* верхняя строка-метаданные */
-.p-form .inv-top{
-  display:flex;justify-content:space-between;gap:10px;
-  font-size:.62rem;letter-spacing:.01em;color:var(--iv-ink);
-  padding-bottom:8px;border-bottom:1.5px solid var(--iv-line);
-}
-.p-form .inv-top b{font-weight:700;}
-/* заголовок + бейдж */
-.p-form .inv-head{
-  display:flex;align-items:center;justify-content:space-between;
-  margin:20px 0 22px;
-}
-.p-form .inv-head h2{
-  font-family:var(--font-sans);font-weight:800;
-  font-size:3rem;letter-spacing:-.035em;line-height:.85;color:var(--iv-ink);
-}
-.p-form .badge{
-  width:96px;height:66px;flex:none;
-  border:1.5px solid var(--iv-ink);border-radius:50%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;font-weight:700;font-size:.72rem;letter-spacing:.02em;line-height:1.2;
-}
-/* имя гостя — как «Billed To» */
-.p-form .billed{margin-bottom:22px;}
-.p-form .billed .lbl{
-  font-size:.68rem;font-weight:700;letter-spacing:.04em;margin-bottom:7px;display:block;
-}
-.p-form .billed .lbl .i{font-weight:400;font-style:italic;color:var(--iv-mut);}
-.p-form input.tx{
-  width:100%;background:transparent;border:none;
-  border-bottom:1.5px solid var(--iv-ink);outline:none;
-  font-family:var(--font-sans);font-size:1rem;font-weight:600;color:var(--iv-ink);
-  padding:4px 2px;
-}
-.p-form input.tx::placeholder{color:var(--iv-mut);font-weight:400;}
-/* имя гостя — известно из ссылки, показываем как заполненную строку */
-.p-form .guest-name{
-  border-bottom:1.5px solid var(--iv-ink);padding:5px 2px;min-height:1.5em;
-  font-family:var(--font-sans);font-size:1.05rem;font-weight:700;color:var(--iv-ink);
-}
-/* таблица вопросов */
-.p-form .qtable{border:1.5px solid var(--iv-line);}
-.p-form .qrow{
-  display:flex;align-items:center;gap:12px;
-  padding:11px 14px;border-bottom:1px solid var(--iv-line);
-}
-.p-form .if-yes .qrow:last-child{border-bottom:none;}
-.p-form .qrow .q{flex:1;font-size:.82rem;font-weight:600;color:var(--iv-ink);}
-.p-form .qrow .q .i{display:block;font-weight:400;font-style:italic;font-size:.7rem;color:var(--iv-mut);}
-.p-form .choice{display:flex;gap:8px;flex:none;}
-.p-form .choice button{
-  cursor:pointer;font-family:var(--font-sans);font-size:.72rem;font-weight:700;
-  letter-spacing:.02em;background:transparent;color:var(--iv-ink);
-  border:1.4px solid var(--iv-ink);border-radius:2px;padding:7px 10px;
-  transition:all .16s ease;
-}
-.p-form .choice button:hover{background:rgba(21,23,15,.08);}
-.p-form .choice button[aria-pressed="true"]{background:var(--iv-ink);color:var(--iv-bg);}
-.p-form .menurow{display:block;padding:11px 14px;border-bottom:none;}
-.p-form .menurow .q{font-size:.82rem;font-weight:600;margin-bottom:7px;display:block;}
-.p-form .menurow .q .i{font-weight:400;font-style:italic;color:var(--iv-mut);}
-.p-form textarea.tx{
-  width:100%;background:transparent;border:1.4px solid var(--iv-ink);border-radius:2px;
-  resize:none;min-height:42px;outline:none;
-  font-family:var(--font-sans);font-size:.8rem;color:var(--iv-ink);padding:7px;
-}
-.p-form textarea.tx::placeholder{color:var(--iv-mut);}
-.p-form .if-yes{
-  max-height:0;overflow:hidden;opacity:0;
-  transition:max-height .5s ease,opacity .4s ease;
-}
-.p-form .if-yes.show{max-height:420px;opacity:1;}
-/* нижний блок: просьба + подпись (как terms + signature в инвойсе) */
-.p-form .inv-foot-block{
-  display:flex;gap:22px;align-items:flex-end;margin-top:18px;
-}
-.p-form .terms{flex:1;}
-.p-form .terms .th{font-weight:700;font-size:.8rem;margin-bottom:6px;}
-.p-form .terms p{font-size:.71rem;line-height:1.5;color:var(--iv-mut);}
-.p-form .sign{width:184px;flex:none;}
-.p-form .sign .sig-wrap{position:relative;height:46px;}
-.p-form .sign .sig-name{
-  position:absolute;left:4px;right:4px;bottom:3px;z-index:2;
-  font-family:'PushkinC',var(--font-script);
-  font-size:2rem;line-height:1;color:var(--iv-ink);
-  white-space:nowrap;overflow:hidden;
-  -webkit-clip-path:inset(0 100% 0 0);clip-path:inset(0 100% 0 0);
-  transition:clip-path 1.4s ease;pointer-events:none;
-}
-.p-form .sign.signed .sig-name{-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0);}
-.p-form .sign .cap{
-  font-size:.62rem;letter-spacing:.06em;color:var(--iv-mut);
-  margin-top:7px;text-align:center;
-}
-.p-form .sign .date{font-weight:600;color:var(--iv-ink);opacity:0;transition:opacity .4s ease 1.1s;}
-.p-form .sign.signed .date{opacity:1;}
-/* кнопка */
-.p-form .submit{
-  display:block;width:100%;margin-top:18px;cursor:pointer;
-  font-family:var(--font-sans);font-size:.8rem;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;
-  background:var(--iv-ink);color:var(--iv-bg);
-  border:none;border-radius:2px;padding:14px;
-  transition:filter .2s ease;
-}
-.p-form .submit:hover{filter:brightness(1.4);}
-.p-form .submit:disabled{opacity:.5;cursor:not-allowed;}
-.p-form .msg{
-  text-align:center;font-style:italic;color:var(--iv-ink);
-  font-size:.8rem;min-height:1.2em;margin-top:8px;
-}
-/* нижняя линейка-подвал */
-.p-form .inv-bottom{
-  display:flex;justify-content:space-between;gap:10px;
-  margin-top:auto;padding-top:8px;border-top:1.5px solid var(--iv-line);
-  font-size:.6rem;letter-spacing:.04em;color:var(--iv-ink);
-}
-/* печать-штамп */
-.p-form .stamp{
-  position:absolute;right:34px;bottom:96px;
-  width:112px;height:112px;border-radius:50%;
-  border:2.5px solid var(--iv-ink);color:var(--iv-ink);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-family:var(--font-sans);text-align:center;
-  transform:rotate(-16deg) scale(0);opacity:.9;
-  transition:transform .35s cubic-bezier(.34,1.6,.5,1);
-  pointer-events:none;mix-blend-mode:multiply;
-}
-.p-form .stamp.show{transform:rotate(-16deg) scale(1);}
-.p-form .stamp .big{font-size:.8rem;font-weight:800;letter-spacing:.08em;}
-.p-form .stamp .sm{font-size:.5rem;letter-spacing:.14em;margin-top:2px;}
-.p-form .stamp .star{font-size:1.05rem;margin:2px 0;}
-.p-form .stamp::before{
-  content:"";position:absolute;inset:7px;border-radius:50%;
-  border:1.2px solid var(--iv-ink);
-}
-/* финальное «спасибо» в анкете */
-.p-form .thanks{display:none;text-align:center;padding:10px 0;}
-.p-form .thanks.show{display:block;}
-.p-form .thanks .big{
-  font-family:'Princess Diana',var(--font-script);font-size:2.6rem;color:var(--iv-ink);line-height:1;
-}
+  /* ярлычок-подпись в куче */
+  .tag {
+    position: absolute;
+    z-index: 3;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: .68rem;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: #111;
+    background: var(--tape);
+    padding: 6px 16px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, .2);
+    transform: rotate(-4deg);
+    transition: opacity .3s ease;
+    pointer-events: none;
+  }
 
-/* ════ 5. ДРЕСС-КОД — карточка-переворот ════ */
-.p-dress{width:470px;}
-.p-dress .sheet{
-  background:transparent;box-shadow:none;overflow:visible;
-  aspect-ratio:939/600;perspective:1500px;border-radius:0;
-}
-.p-dress.open .sheet{overflow:visible;max-height:none;}
-.p-dress .flip{
-  position:relative;width:100%;height:100%;
-  transform-style:preserve-3d;
-  transition:transform .9s cubic-bezier(.4,0,.2,1);
-}
-.p-dress.open .flip{transform:rotateY(180deg);}
-.p-dress .face{
-  position:absolute;inset:0;
-  backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  border-radius:9px;overflow:hidden;
-  box-shadow:0 22px 44px rgba(0,0,0,.5);
-}
-.p-dress .face img{width:100%;height:100%;object-fit:cover;display:block;}
-.p-dress .face.back{transform:rotateY(180deg);}
+  .paper.open .tag {
+    opacity: 0;
+  }
 
-/* ── бумажный самолётик → Telegram-канал ── */
-.tg-plane{
-  position:fixed;top:20%;right:15%;z-index:120;
-  width:118px;cursor:pointer;text-decoration:none;
-  opacity:0;transform:translateY(-10px);
-  transition:opacity .6s ease,transform .6s ease;
-  pointer-events:none;
-}
-.tg-plane.show{opacity:1;pointer-events:auto;animation:planeBob 3.4s ease-in-out infinite;}
-.tg-plane img{
-  width:100%;display:block;
-  filter:drop-shadow(0 10px 16px rgba(0,0,0,.4));
-  transition:transform .3s ease;
-}
-.tg-plane:hover img{transform:scale(1.09) rotate(-5deg);}
-.tg-plane .tg-label{
-  position:absolute;left:50%;bottom:-13px;transform:translateX(-50%);
-  font-family:var(--font-sans);font-weight:600;font-size:.6rem;letter-spacing:.2em;
-  text-transform:uppercase;color:#f4ecdb;white-space:nowrap;
-  text-shadow:0 1px 5px rgba(40,40,30,.65);
-}
-@keyframes planeBob{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-11px) rotate(-3deg);}}
-.tg-plane.flying{animation:planeFly 1.05s cubic-bezier(.5,0,.7,1) forwards;pointer-events:none;}
-@keyframes planeFly{
-  0%{transform:translate(0,0) rotate(0) scale(1);opacity:1;}
-  25%{transform:translate(-26px,18px) rotate(7deg) scale(1.06);}
-  100%{transform:translate(-58vw,-72vh) rotate(-16deg) scale(.4);opacity:0;}
-}
+  /* кнопка закрыть */
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 9;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: rgba(60, 44, 37, .16);
+    color: var(--brown);
+    font-family: var(--font-sans);
+    font-size: 1.2rem;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity .35s ease .2s, background .2s;
+  }
 
-@media(max-width:480px){
-  .envelope{width:340px;height:340px;}
-  .title-top{top:4%;}
-  .p-ticket{width:380px;}
-  .p-dress{width:340px;}
-  .tg-plane{width:88px;top:17%;right:11%;}
-}
+  .paper.open .close {
+    opacity: 1;
+  }
+
+  .close:hover {
+    background: rgba(60, 44, 37, .32);
+  }
+
+  /* затемнение фона при открытой бумажке */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(20, 26, 33, .66);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease;
+  }
+
+  .backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ════ полароид — наши фото (реальная рамка PNG) ════ */
+  .p-photo {
+    width: 320px;
+  }
+
+  .p-photo .sheet {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 577/706;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .p-photo .pic {
+    position: absolute;
+    left: 6.76%;
+    top: 6.09%;
+    width: 86.83%;
+    height: 73.09%;
+    overflow: hidden;
+    z-index: 1;
+    background: #e7ddcb;
+  }
+
+  .p-photo .pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .p-photo .frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .4));
+  }
+
+  /* ════ 1. ПРИГЛАШЕНИЕ — крафт-карточка с рваным краем ════ */
+  .p-invite {
+    width: 400px;
+  }
+
+  .p-invite .sheet {
+    aspect-ratio: 1200/1500;
+    padding: 17% 20%;
+    color: #111;
+    background: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .p-invite .close {
+    color: #3a3a3a;
+    top: 16%;
+    right: 18%;
+  }
+
+  .p-invite .sheet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url("assets/invite-doily.png") center/contain no-repeat;
+  }
+
+  .p-invite .seal {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-8deg);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, #c5454d, var(--ink-deep) 78%);
+    box-shadow: 0 4px 9px rgba(0, 0, 0, .35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f1d6c1;
+    font-family: var(--font-script);
+    font-size: 1.5rem;
+  }
+
+  .p-invite .kick {
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: .66rem;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 6px 0 4px;
+  }
+
+  .p-invite h2 {
+    font-family: 'Princess Diana', var(--font-script);
+    font-weight: 400;
+    font-size: 1.95rem;
+    color: #111;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .p-invite .names {
+    font-family: var(--font-script);
+    font-size: 2.4rem;
+    text-align: center;
+    color: var(--brown);
+    margin: .1em 0;
+  }
+
+  .p-invite .names .amp {
+    color: var(--gold);
+    font-size: 1.5rem;
+  }
+
+  .p-invite p {
+    text-align: center;
+    font-size: .92rem;
+    margin: .4em 0;
+    line-height: 1.5;
+    color: #111;
+  }
+
+  .p-invite .note {
+    font-style: italic;
+    color: #333;
+    font-size: .72rem;
+    line-height: 1.45;
+    margin-top: 1em;
+    padding-top: 0;
+  }
+
+  .p-invite .note+* {
+    margin-top: 0;
+  }
+
+  .p-invite .orn {
+    text-align: center;
+    color: #111;
+    letter-spacing: .3em;
+    margin: .3em 0;
+  }
+
+  /* ════ 2. БИЛЕТ — локация / дата / место ════ */
+  /* билет в стиле винтажного киношного билета */
+  .p-ticket {
+    width: 720px;
+    font-family: var(--font-sans);
+    --tk-ink: #25352a;
+    --tk-red: #2f5a3a;
+  }
+
+  .p-ticket .sheet {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    color: var(--tk-ink);
+    background: radial-gradient(125% 135% at 50% 45%, #f7f0dd 52%, #ece1c6 100%);
+    border-radius: 14px;
+    box-shadow: 0 22px 44px rgba(0, 0, 0, .42), inset 0 0 40px rgba(150, 130, 90, .16);
+  }
+
+  /* левая вертикальная надпись на кромке */
+  .p-ticket .edge {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    writing-mode: vertical-rl;
+    transform: translateY(-50%) rotate(180deg);
+    font-size: .56rem;
+    letter-spacing: .16em;
+    color: rgba(43, 40, 34, .7);
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  .p-ticket .edge-l {
+    left: 9px;
+  }
+
+  .p-ticket .edge-r {
+    right: 9px;
+  }
+
+  .p-ticket .main {
+    flex: 1;
+    padding: 24px 30px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px dashed rgba(43, 40, 34, .4);
+  }
+
+  .p-ticket .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .p-ticket .brand h2 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 2rem;
+    letter-spacing: .03em;
+    color: var(--tk-ink);
+    text-align: center;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .p-ticket .star {
+    color: var(--tk-ink);
+    font-size: 1.05rem;
+  }
+
+  .p-ticket .addr {
+    text-align: center;
+    font-size: .72rem;
+    letter-spacing: .02em;
+    color: var(--tk-ink);
+    padding: 7px 0;
+    margin-top: 8px;
+    border-top: 1px solid rgba(43, 40, 34, .5);
+    border-bottom: 1px solid rgba(43, 40, 34, .5);
+  }
+
+  .p-ticket .addr a {
+    color: var(--tk-ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .p-ticket .feature {
+    text-align: center;
+    padding: 16px 0 15px;
+  }
+
+  .p-ticket .ft-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: .03em;
+    color: var(--tk-red);
+    line-height: 1;
+  }
+
+  .p-ticket .ft-sub {
+    font-style: italic;
+    font-size: .76rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--tk-ink);
+    margin-top: 6px;
+  }
+
+  .p-ticket .cols {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    border-top: 1px solid rgba(43, 40, 34, .5);
+    padding-top: 12px;
+  }
+
+  .p-ticket .col {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .p-ticket .cl {
+    font-size: .6rem;
+    letter-spacing: .16em;
+    color: var(--tk-ink);
+    font-weight: 600;
+  }
+
+  .p-ticket .cv {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--tk-ink);
+  }
+
+  .p-ticket .foot {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: auto;
+    padding-top: 14px;
+  }
+
+  .p-ticket .guests {
+    margin-left: auto;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--tk-red);
+  }
+
+  .p-ticket .mapbanner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 76px;
+    margin-top: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+    text-decoration: none;
+    background: linear-gradient(rgba(28, 38, 28, .26), rgba(28, 38, 28, .42)), url("assets/sunflowers.jpg") center/cover;
+    box-shadow: 0 5px 13px rgba(0, 0, 0, .24);
+    transition: filter .25s ease, box-shadow .25s ease;
+  }
+
+  .p-ticket .mapbanner:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .32);
+  }
+
+  .p-ticket .mapbanner span {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: .9rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #fdf6e8;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, .55);
+  }
+
+  /* отрывной корешок */
+  .p-ticket .stub {
+    width: 158px;
+    flex: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 18px 12px;
+  }
+
+  .p-ticket .admit-v {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: 700;
+    letter-spacing: .22em;
+    font-size: .82rem;
+    color: var(--tk-red);
+    white-space: nowrap;
+  }
+
+  .p-ticket .stub-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .p-ticket .stub-info b {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: .06em;
+    color: var(--tk-ink);
+  }
+
+  .p-ticket .stub-info span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    font-size: .7rem;
+    letter-spacing: .08em;
+    color: var(--tk-ink);
+  }
+
+  /* ════ 3. РАСПИСАНИЕ — лист из блокнота на пружине ════ */
+  .p-sched {
+    width: 500px;
+  }
+
+  .p-sched .sheet {
+    aspect-ratio: 1/1;
+    background: url("assets/sticker.png") center/contain no-repeat;
+    padding: 25% 22.5% 21% 26%;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .p-sched .tag {
+    top: 24%;
+    left: 24%;
+  }
+
+  .p-sched .close {
+    top: 23.5%;
+    right: 25%;
+  }
+
+  .p-sched h2 {
+    font-family: 'PushkinC', var(--font-script);
+    font-weight: 400;
+    font-size: 1.6rem;
+    color: #111;
+    line-height: 1;
+    margin-bottom: .5em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .p-sched .item {
+    display: flex;
+    gap: 9px;
+    align-items: baseline;
+    padding: 3px 0;
+  }
+
+  .p-sched .item .t {
+    font-family: 'PushkinC', var(--font-script);
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #111;
+    width: 48px;
+    flex: none;
+    line-height: 1;
+  }
+
+  .p-sched .item .d {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: #111;
+    line-height: 1.12;
+  }
+
+  .p-sched .item .d small {
+    display: block;
+    font-style: italic;
+    font-size: .74rem;
+    color: #111;
+    opacity: .72;
+    line-height: 1.15;
+  }
+
+  /* ════ 4. АНКЕТА — официальный бланк, который подписывают ════ */
+  /* ════ 4. АНКЕТА — в стиле минималистичного инвойса ════ */
+  .p-form {
+    width: 480px;
+    --iv-bg: #edf1e0;
+    --iv-ink: #25352a;
+    --iv-mut: #5c6b5b;
+    --iv-line: #25352a;
+  }
+
+  .p-form .sheet {
+    background: var(--iv-bg);
+    padding: 30px 34px 24px;
+    box-shadow: 0 22px 40px rgba(0, 0, 0, .42);
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    min-height: 670px;
+    font-family: var(--font-sans);
+    color: var(--iv-ink);
+  }
+
+  .p-form .sheet::before {
+    border: none;
+  }
+
+  .p-form #rsvp {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* верхняя строка-метаданные */
+  .p-form .inv-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: .62rem;
+    letter-spacing: .01em;
+    color: var(--iv-ink);
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--iv-line);
+  }
+
+  .p-form .inv-top b {
+    font-weight: 700;
+  }
+
+  /* заголовок + бейдж */
+  .p-form .inv-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0 22px;
+  }
+
+  .p-form .inv-head h2 {
+    font-family: var(--font-sans);
+    font-weight: 800;
+    font-size: 3rem;
+    letter-spacing: -.035em;
+    line-height: .85;
+    color: var(--iv-ink);
+  }
+
+  .p-form .badge {
+    width: 96px;
+    height: 66px;
+    flex: none;
+    border: 1.5px solid var(--iv-ink);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 700;
+    font-size: .72rem;
+    letter-spacing: .02em;
+    line-height: 1.2;
+  }
+
+  /* имя гостя — как «Billed To» */
+  .p-form .billed {
+    margin-bottom: 22px;
+  }
+
+  .p-form .billed .lbl {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    margin-bottom: 7px;
+    display: block;
+  }
+
+  .p-form .billed .lbl .i {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--iv-mut);
+  }
+
+  .p-form input.tx {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--iv-ink);
+    outline: none;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--iv-ink);
+    padding: 4px 2px;
+  }
+
+  .p-form input.tx::placeholder {
+    color: var(--iv-mut);
+    font-weight: 400;
+  }
+
+  /* имя гостя — известно из ссылки, показываем как заполненную строку */
+  .p-form .guest-name {
+    border-bottom: 1.5px solid var(--iv-ink);
+    padding: 5px 2px;
+    min-height: 1.5em;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--iv-ink);
+  }
+
+  /* таблица вопросов */
+  .p-form .qtable {
+    border: 1.5px solid var(--iv-line);
+  }
+
+  .p-form .qrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--iv-line);
+  }
+
+  .p-form .if-yes .qrow:last-child {
+    border-bottom: none;
+  }
+
+  .p-form .qrow .q {
+    flex: 1;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--iv-ink);
+  }
+
+  .p-form .qrow .q .i {
+    display: block;
+    font-weight: 400;
+    font-style: italic;
+    font-size: .7rem;
+    color: var(--iv-mut);
+  }
+
+  .p-form .choice {
+    display: flex;
+    gap: 8px;
+    flex: none;
+  }
+
+  .p-form .choice button {
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    background: transparent;
+    color: var(--iv-ink);
+    border: 1.4px solid var(--iv-ink);
+    border-radius: 2px;
+    padding: 7px 10px;
+    transition: all .16s ease;
+  }
+
+  .p-form .choice button:hover {
+    background: rgba(21, 23, 15, .08);
+  }
+
+  .p-form .choice button[aria-pressed="true"] {
+    background: var(--iv-ink);
+    color: var(--iv-bg);
+  }
+
+  .p-form .menurow {
+    display: block;
+    padding: 11px 14px;
+    border-bottom: none;
+  }
+
+  .p-form .menurow .q {
+    font-size: .82rem;
+    font-weight: 600;
+    margin-bottom: 7px;
+    display: block;
+  }
+
+  .p-form .menurow .q .i {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--iv-mut);
+  }
+
+  .p-form textarea.tx {
+    width: 100%;
+    background: transparent;
+    border: 1.4px solid var(--iv-ink);
+    border-radius: 2px;
+    resize: none;
+    min-height: 42px;
+    outline: none;
+    font-family: var(--font-sans);
+    font-size: .8rem;
+    color: var(--iv-ink);
+    padding: 7px;
+  }
+
+  .p-form textarea.tx::placeholder {
+    color: var(--iv-mut);
+  }
+
+  .p-form .if-yes {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .5s ease, opacity .4s ease;
+  }
+
+  .p-form .if-yes.show {
+    max-height: 420px;
+    opacity: 1;
+  }
+
+  /* нижний блок: просьба + подпись (как terms + signature в инвойсе) */
+  .p-form .inv-foot-block {
+    display: flex;
+    gap: 22px;
+    align-items: flex-end;
+    margin-top: 18px;
+  }
+
+  .p-form .terms {
+    flex: 1;
+  }
+
+  .p-form .terms .th {
+    font-weight: 700;
+    font-size: .8rem;
+    margin-bottom: 6px;
+  }
+
+  .p-form .terms p {
+    font-size: .71rem;
+    line-height: 1.5;
+    color: var(--iv-mut);
+  }
+
+  .p-form .sign {
+    width: 184px;
+    flex: none;
+  }
+
+  .p-form .sign .sig-wrap {
+    position: relative;
+    height: 46px;
+  }
+
+  .p-form .sign .sig-name {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 3px;
+    z-index: 2;
+    font-family: 'PushkinC', var(--font-script);
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--iv-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-clip-path: inset(0 100% 0 0);
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1.4s ease;
+    pointer-events: none;
+  }
+
+  .p-form .sign.signed .sig-name {
+    -webkit-clip-path: inset(0 0 0 0);
+    clip-path: inset(0 0 0 0);
+  }
+
+  .p-form .sign .cap {
+    font-size: .62rem;
+    letter-spacing: .06em;
+    color: var(--iv-mut);
+    margin-top: 7px;
+    text-align: center;
+  }
+
+  .p-form .sign .date {
+    font-weight: 600;
+    color: var(--iv-ink);
+    opacity: 0;
+    transition: opacity .4s ease 1.1s;
+  }
+
+  .p-form .sign.signed .date {
+    opacity: 1;
+  }
+
+  /* кнопка */
+  .p-form .submit {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    background: var(--iv-ink);
+    color: var(--iv-bg);
+    border: none;
+    border-radius: 2px;
+    padding: 14px;
+    transition: filter .2s ease;
+  }
+
+  .p-form .submit:hover {
+    filter: brightness(1.4);
+  }
+
+  .p-form .submit:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+
+  .p-form .msg {
+    text-align: center;
+    font-style: italic;
+    color: var(--iv-ink);
+    font-size: .8rem;
+    min-height: 1.2em;
+    margin-top: 8px;
+  }
+
+  /* нижняя линейка-подвал */
+  .p-form .inv-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1.5px solid var(--iv-line);
+    font-size: .6rem;
+    letter-spacing: .04em;
+    color: var(--iv-ink);
+  }
+
+  /* печать-штамп */
+  .p-form .stamp {
+    position: absolute;
+    right: 34px;
+    bottom: 96px;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    border: 2.5px solid var(--iv-ink);
+    color: var(--iv-ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    text-align: center;
+    transform: rotate(-16deg) scale(0);
+    opacity: .9;
+    transition: transform .35s cubic-bezier(.34, 1.6, .5, 1);
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  .p-form .stamp.show {
+    transform: rotate(-16deg) scale(1);
+  }
+
+  .p-form .stamp .big {
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+  }
+
+  .p-form .stamp .sm {
+    font-size: .5rem;
+    letter-spacing: .14em;
+    margin-top: 2px;
+  }
+
+  .p-form .stamp .star {
+    font-size: 1.05rem;
+    margin: 2px 0;
+  }
+
+  .p-form .stamp::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    border: 1.2px solid var(--iv-ink);
+  }
+
+  /* финальное «спасибо» в анкете */
+  .p-form .thanks {
+    display: none;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .p-form .thanks.show {
+    display: block;
+  }
+
+  .p-form .thanks .big {
+    font-family: 'Princess Diana', var(--font-script);
+    font-size: 2.6rem;
+    color: var(--iv-ink);
+    line-height: 1;
+  }
+
+  /* ════ 5. ДРЕСС-КОД — карточка-переворот ════ */
+  .p-dress {
+    width: 470px;
+  }
+
+  .p-dress .sheet {
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    aspect-ratio: 939/600;
+    perspective: 1500px;
+    border-radius: 0;
+  }
+
+  .p-dress.open .sheet {
+    overflow: visible;
+    max-height: none;
+  }
+
+  .p-dress .flip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .9s cubic-bezier(.4, 0, .2, 1);
+  }
+
+  .p-dress.open .flip {
+    transform: rotateY(180deg);
+  }
+
+  .p-dress .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 22px 44px rgba(0, 0, 0, .5);
+  }
+
+  .p-dress .face img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .p-dress .face.back {
+    transform: rotateY(180deg);
+  }
+
+  /* ── бумажный самолётик → Telegram-канал ── */
+  .tg-plane {
+    position: fixed;
+    top: 20%;
+    right: 15%;
+    z-index: 120;
+    width: 118px;
+    cursor: pointer;
+    text-decoration: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity .6s ease, transform .6s ease;
+    pointer-events: none;
+  }
+
+  .tg-plane.show {
+    opacity: 1;
+    pointer-events: auto;
+    animation: planeBob 3.4s ease-in-out infinite;
+  }
+
+  .tg-plane img {
+    width: 100%;
+    display: block;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .4));
+    transition: transform .3s ease;
+  }
+
+  .tg-plane:hover img {
+    transform: scale(1.09) rotate(-5deg);
+  }
+
+  .tg-plane .tg-label {
+    position: absolute;
+    left: 50%;
+    bottom: -13px;
+    transform: translateX(-50%);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: .6rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #f4ecdb;
+    white-space: nowrap;
+    text-shadow: 0 1px 5px rgba(40, 40, 30, .65);
+  }
+
+  @keyframes planeBob {
+
+    0%,
+    100% {
+      transform: translateY(0) rotate(0);
+    }
+
+    50% {
+      transform: translateY(-11px) rotate(-3deg);
+    }
+  }
+
+  .tg-plane.flying {
+    animation: planeFly 1.05s cubic-bezier(.5, 0, .7, 1) forwards;
+    pointer-events: none;
+  }
+
+  @keyframes planeFly {
+    0% {
+      transform: translate(0, 0) rotate(0) scale(1);
+      opacity: 1;
+    }
+
+    25% {
+      transform: translate(-26px, 18px) rotate(7deg) scale(1.06);
+    }
+
+    100% {
+      transform: translate(-58vw, -72vh) rotate(-16deg) scale(.4);
+      opacity: 0;
+    }
+  }
+
+  @media(max-width:480px) {
+    .envelope {
+      width: 340px;
+      height: 340px;
+    }
+
+    .title-top {
+      top: 4%;
+    }
+
+    .p-ticket {
+      width: 380px;
+    }
+
+    .p-dress {
+      width: 340px;
+    }
+
+    .tg-plane {
+      width: 88px;
+      top: 17%;
+      right: 11%;
+    }
+  }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <filter id="deckle">
-    <feTurbulence type="fractalNoise" baseFrequency="0.013 0.017" numOctaves="3" seed="9" result="n"/>
-    <feDisplacementMap in="SourceGraphic" in2="n" scale="12"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.013 0.017" numOctaves="3" seed="9" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="12" />
   </filter>
 </svg>
 
@@ -620,7 +1488,7 @@ body::after{
 
   <!-- ─── конверт ─── -->
   <div class="envelope nudge" id="envelope">
-    <img class="env-img env-open"   src="assets/envelope-open.png"   alt="" aria-hidden="true">
+    <img class="env-img env-open" src="assets/envelope-open.png" alt="" aria-hidden="true">
     <img class="env-img env-closed" src="assets/envelope-closed.png" alt="Конверт с приглашением">
   </div>
 
@@ -632,7 +1500,7 @@ body::after{
       <h2 id="inviteGreeting">Дорогие Лиза и Максат!</h2>
       <p class="orn">· ❀ ·</p>
       <p id="inviteBody">С большой радостью приглашаем вас разделить с нами
-         один из самых счастливых дней нашей жизни — день нашей свадьбы.</p>
+        один из самых счастливых дней нашей жизни — день нашей свадьбы.</p>
       <p class="orn">·</p>
       <p class="note" id="inviteNote">
         Внутри конверта — ещё несколько бумажек.
@@ -655,7 +1523,9 @@ body::after{
         </div>
         <!-- [ПРАВИТЬ] площадка · адрес · ссылка на карту -->
         <div class="addr">Агроусадьба «Подсолнух» &nbsp;|&nbsp; деревня Горново, Пинский р-н &nbsp;|&nbsp;
-          <a href="https://yandex.by/maps/org/agrousadba_podsolnukh/153416982576/" target="_blank" rel="noopener">на карте</a></div>
+          <a href="https://yandex.by/maps/org/agrousadba_podsolnukh/153416982576/" target="_blank" rel="noopener">на
+            карте</a>
+        </div>
         <div class="feature">
           <div class="ft-title">ПРИГЛАШЕНИЕ НА СВАДЬБУ</div>
           <div class="ft-sub">торжество · банкет · танцы</div>
@@ -667,7 +1537,8 @@ body::after{
           <div class="col"><span class="cl">СБОР</span><span class="cv">14:00</span></div>
         </div>
         <!-- [ПРАВИТЬ] баннер со ссылкой на карту -->
-        <a class="mapbanner" href="https://yandex.by/maps/org/agrousadba_podsolnukh/153416982576/" target="_blank" rel="noopener">
+        <a class="mapbanner" href="https://yandex.by/maps/org/agrousadba_podsolnukh/153416982576/" target="_blank"
+          rel="noopener">
           <span>Открыть на карте →</span>
         </a>
         <div class="foot">
@@ -693,15 +1564,20 @@ body::after{
       <h2>Как пройдёт день</h2>
       <!-- [ПРАВИТЬ] пункты расписания -->
       <div class="item"><span class="t">11:20</span>
-        <span class="d">Роспись в ЗАГСе<small>официальная церемония</small></span></div>
+        <span class="d">Роспись в ЗАГСе<small>официальная церемония</small></span>
+      </div>
       <div class="item"><span class="t">13:30</span>
-        <span class="d">Трансфер для гостей<small>автобус от точки сбора до усадьбы</small></span></div>
+        <span class="d">Трансфер для гостей<small>автобус от точки сбора до усадьбы</small></span>
+      </div>
       <div class="item"><span class="t">14:00</span>
-        <span class="d">Велком и фуршет<small>напитки, лёгкие закуски, фотозона</small></span></div>
+        <span class="d">Велком и фуршет<small>напитки, лёгкие закуски, фотозона</small></span>
+      </div>
       <div class="item"><span class="t">15:00</span>
-        <span class="d">Банкет<small>ужин, тосты, поздравления и танцы</small></span></div>
+        <span class="d">Банкет<small>ужин, тосты, поздравления и танцы</small></span>
+      </div>
       <div class="item"><span class="t">23:00</span>
-        <span class="d">Завершение<small>трансфер для гостей обратно</small></span></div>
+        <span class="d">Завершение<small>трансфер для гостей обратно</small></span>
+      </div>
     </div>
   </article>
 
@@ -837,437 +1713,538 @@ body::after{
 
 <!-- [ПРАВИТЬ] ссылка на Telegram-канал (пока заглушка) -->
 <a class="tg-plane" id="tgPlane" href="https://t.me/telegram" target="_blank" rel="noopener"
-   aria-label="Наш Telegram-канал">
+  aria-label="Наш Telegram-канал">
   <img src="assets/telegram-plane.png" alt="">
   <span class="tg-label">наш канал</span>
 </a>
 
 <script>
-/* показываем страницу только когда все шрифты подгружены — без видимой подмены */
-(function(){
-  const reveal = ()=>document.body.classList.add('fonts-ready');
-  const fonts = [
-    '400 1em "Caveat"','700 1em "Caveat"',
-    '400 1em "Cormorant Garamond"','italic 400 1em "Cormorant Garamond"',
-    '400 1em "Commissioner"','600 1em "Commissioner"','700 1em "Commissioner"','800 1em "Commissioner"',
-    '1em "PushkinC"',
-    '1em "Princess Diana"'
-  ];
-  if(document.fonts && document.fonts.load){
-    Promise.all(fonts.map(f=>document.fonts.load(f).catch(()=>{})))
-      .then(()=>document.fonts.ready).then(reveal).catch(reveal);
-    setTimeout(reveal, 2500);   /* страховка, если шрифт не отдаётся */
-  } else {
-    reveal();
+  /* показываем страницу, только когда готовы И шрифты, И данные гостя —
+     чтобы не мелькнула подмена имён «на лету» */
+  window.__ready = { fonts: false, guest: false };
+  window.__reveal = function () {
+    if (window.__ready.fonts && window.__ready.guest)
+      document.body.classList.add('fonts-ready');
+  };
+  (function () {
+    const fontsDone = () => { window.__ready.fonts = true; window.__reveal(); };
+    const fonts = [
+      '400 1em "Caveat"', '700 1em "Caveat"',
+      '400 1em "Cormorant Garamond"', 'italic 400 1em "Cormorant Garamond"',
+      '400 1em "Commissioner"', '600 1em "Commissioner"', '700 1em "Commissioner"', '800 1em "Commissioner"',
+      '1em "PushkinC"',
+      '1em "Princess Diana"'
+    ];
+    if (document.fonts && document.fonts.load) {
+      Promise.all(fonts.map(f => document.fonts.load(f).catch(() => { })))
+        .then(() => document.fonts.ready).then(fontsDone).catch(fontsDone);
+      /* страховка: если шрифт или сеть подвисли — показать всё равно через 3.5с */
+      setTimeout(() => { window.__ready.fonts = true; window.__ready.guest = true; window.__reveal(); }, 3500);
+    } else {
+      window.__ready.fonts = true; window.__ready.guest = true; window.__reveal();
+    }
+  })();
+
+  const envelope = document.getElementById('envelope');
+  const papers = [...document.querySelectorAll('.paper')];
+  const tgPlane = document.getElementById('tgPlane');
+  /* самолётик «улетает» при клике, ссылка открывается в новой вкладке */
+  tgPlane.addEventListener('click', () => {
+    tgPlane.classList.add('flying');
+    setTimeout(() => tgPlane.classList.remove('flying'), 1150);
+  });
+  const backdrop = document.getElementById('backdrop');
+  const hintOpen = document.getElementById('hintOpen');
+  const hintPick = document.getElementById('hintPick');
+  const titleTop = document.getElementById('titleTop');
+
+  /* доступность: конверт — фокусируемая кнопка */
+  envelope.tabIndex = 0;
+  envelope.setAttribute('role', 'button');
+  envelope.setAttribute('aria-label', 'Открыть конверт с приглашением');
+  envelope.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); envelope.click(); }
+  });
+
+  /* раскладка кучи: позиция центра (%) + наклон.
+     разнесены так, чтобы левый-верхний угол (где ярлычок) у каждой
+     бумажки оставался открытым и читался. */
+  const PILE = {
+    invite: { top: '46%', left: '25%', rot: -11 },
+    ticket: { top: '48%', left: '73%', rot: -8 },
+    sched: { top: '24%', left: '28%', rot: -7 },
+    form: { top: '78%', left: '71%', rot: 10 },
+    dress: { top: '70%', left: '31%', rot: -5 },
+    photo1: { top: '22%', left: '46%', rot: -6 },
+    photo2: { top: '70%', left: '51%', rot: 7 },
+    photo3: { top: '24%', left: '66%', rot: 11 }
+  };
+  /* в куче бумажки мельче на узких экранах, чтобы влезали целиком */
+  let PILE_SCALE = innerWidth < 600 ? .4 : .5;
+  /* билет должен лежать поверх полароидов, которые идут позже в DOM */
+  const Z_BOOST = { ticket: 12 };
+  papers.forEach((p, i) => { p._z = 10 + i + (Z_BOOST[p.dataset.paper] || 0); p.style.zIndex = p._z; });
+
+  /* ── открытие конверта ── */
+  let opened = false;
+  envelope.addEventListener('click', () => {
+    if (opened) return;
+    opened = true;
+    envelope.classList.remove('nudge');
+    envelope.classList.add('opened');
+    hintOpen.classList.add('gone');
+    titleTop.classList.add('gone');
+
+    /* бумажки вылетают в кучу со сдвигом по времени */
+    setTimeout(() => {
+      papers.forEach((p, i) => {
+        const c = PILE[p.dataset.paper];
+        setTimeout(() => {
+          p.style.opacity = 1;
+          p.style.top = c.top;
+          p.style.left = c.left;
+          p.style.setProperty('--rot', c.rot + 'deg');
+          p.style.setProperty('--scale', PILE_SCALE);
+          p.classList.add('pile');
+          /* доступность: бумажка в куче — фокусируемая «кнопка» */
+          p.tabIndex = 0;
+          p.setAttribute('role', 'button');
+          const tg = p.querySelector('.tag');
+          p.setAttribute('aria-label', (tg ? tg.textContent.trim() : 'бумажка') + ' — открыть');
+        }, i * 150);
+      });
+      setTimeout(() => { hintPick.style.opacity = .95; tgPlane.classList.add('show'); }, papers.length * 150 + 250);
+    }, 620);
+  });
+
+  /* ── открыть / закрыть бумажку ── */
+  let current = null;
+
+  function fitScale(p) {
+    const w = p.offsetWidth, h = p.offsetHeight;
+    return Math.min(1, (innerWidth - 44) / w, (innerHeight - 44) / h);
   }
-})();
-
-const envelope = document.getElementById('envelope');
-const papers   = [...document.querySelectorAll('.paper')];
-const tgPlane  = document.getElementById('tgPlane');
-/* самолётик «улетает» при клике, ссылка открывается в новой вкладке */
-tgPlane.addEventListener('click', ()=>{
-  tgPlane.classList.add('flying');
-  setTimeout(()=>tgPlane.classList.remove('flying'), 1150);
-});
-const backdrop = document.getElementById('backdrop');
-const hintOpen = document.getElementById('hintOpen');
-const hintPick = document.getElementById('hintPick');
-const titleTop = document.getElementById('titleTop');
-
-/* доступность: конверт — фокусируемая кнопка */
-envelope.tabIndex = 0;
-envelope.setAttribute('role','button');
-envelope.setAttribute('aria-label','Открыть конверт с приглашением');
-envelope.addEventListener('keydown', e=>{
-  if(e.key==='Enter' || e.key===' '){ e.preventDefault(); envelope.click(); }
-});
-
-/* раскладка кучи: позиция центра (%) + наклон.
-   разнесены так, чтобы левый-верхний угол (где ярлычок) у каждой
-   бумажки оставался открытым и читался. */
-const PILE = {
-  invite: {top:'46%', left:'25%', rot:-11},
-  ticket: {top:'48%', left:'73%', rot: -8},
-  sched:  {top:'24%', left:'28%', rot: -7},
-  form:   {top:'78%', left:'71%', rot: 10},
-  dress:  {top:'70%', left:'31%', rot: -5},
-  photo1: {top:'22%', left:'46%', rot: -6},
-  photo2: {top:'70%', left:'51%', rot:  7},
-  photo3: {top:'24%', left:'66%', rot: 11}
-};
-/* в куче бумажки мельче на узких экранах, чтобы влезали целиком */
-let PILE_SCALE = innerWidth < 600 ? .4 : .5;
-/* билет должен лежать поверх полароидов, которые идут позже в DOM */
-const Z_BOOST = { ticket: 12 };
-papers.forEach((p,i)=>{ p._z = 10+i+(Z_BOOST[p.dataset.paper]||0); p.style.zIndex = p._z; });
-
-/* ── открытие конверта ── */
-let opened=false;
-envelope.addEventListener('click', ()=>{
-  if(opened) return;
-  opened=true;
-  envelope.classList.remove('nudge');
-  envelope.classList.add('opened');
-  hintOpen.classList.add('gone');
-  titleTop.classList.add('gone');
-
-  /* бумажки вылетают в кучу со сдвигом по времени */
-  setTimeout(()=>{
-    papers.forEach((p,i)=>{
-      const c = PILE[p.dataset.paper];
-      setTimeout(()=>{
-        p.style.opacity = 1;
-        p.style.top  = c.top;
-        p.style.left = c.left;
-        p.style.setProperty('--rot', c.rot+'deg');
-        p.style.setProperty('--scale', PILE_SCALE);
-        p.classList.add('pile');
-        /* доступность: бумажка в куче — фокусируемая «кнопка» */
-        p.tabIndex = 0;
-        p.setAttribute('role','button');
-        const tg = p.querySelector('.tag');
-        p.setAttribute('aria-label', (tg ? tg.textContent.trim() : 'бумажка') + ' — открыть');
-      }, i*150);
-    });
-    setTimeout(()=>{ hintPick.style.opacity = .95; tgPlane.classList.add('show'); }, papers.length*150+250);
-  }, 620);
-});
-
-/* ── открыть / закрыть бумажку ── */
-let current=null;
-
-function fitScale(p){
-  const w=p.offsetWidth, h=p.offsetHeight;
-  return Math.min(1,(innerWidth-44)/w,(innerHeight-44)/h);
-}
-function openPaper(p){
-  if(current || !p.classList.contains('pile')) return;
-  current=p;
-  hintPick.classList.add('gone');
-  hintPick.style.opacity = 0;   /* инлайн перебивал класс .gone — теперь прячем явно */
-  backdrop.classList.add('show');
-  const s=fitScale(p);
-  p.style.setProperty('--openscale', s);
-  p.classList.remove('pile');
-  p.classList.add('open');
-  p.style.zIndex=200;
-  p.style.top='50%'; p.style.left='50%';
-  p.style.setProperty('--rot','0deg');
-  p.style.setProperty('--scale', s);
-}
-function closePaper(){
-  if(!current) return;
-  const p=current, c=PILE[p.dataset.paper];
-  p.classList.remove('open');
-  p.classList.add('pile');
-  p.style.top=c.top; p.style.left=c.left;
-  p.style.setProperty('--rot', c.rot+'deg');
-  p.style.setProperty('--scale', PILE_SCALE);
-  backdrop.classList.remove('show');
-  hintPick.classList.remove('gone');
-  hintPick.style.opacity = .95;  /* вернуть подсказку над кучей */
-  setTimeout(()=>{ p.style.zIndex=p._z; }, 600);
-  current=null;
-}
-
-papers.forEach(p=>{
-  p.addEventListener('click', e=>{
-    if(p.classList.contains('open')) return;     // клики внутри открытой не мешают
-    openPaper(p);
-  });
-  /* открытие с клавиатуры (Enter / Пробел), только пока бумажка в куче */
-  p.addEventListener('keydown', e=>{
-    if(p.classList.contains('open')) return;
-    if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openPaper(p); }
-  });
-  p.querySelector('.close').addEventListener('click', e=>{
-    e.stopPropagation(); closePaper();
-  });
-});
-backdrop.addEventListener('click', closePaper);
-addEventListener('keydown', e=>{ if(e.key==='Escape') closePaper(); });
-addEventListener('resize', ()=>{
-  PILE_SCALE = innerWidth < 600 ? .4 : .5;
-  if(current){
-    const s=fitScale(current);
-    current.style.setProperty('--openscale', s);
-    current.style.setProperty('--scale', s);
-  } else if(opened){
-    /* переразложить кучу под новый размер экрана */
-    papers.forEach(p=>{
-      if(p.classList.contains('pile')) p.style.setProperty('--scale', PILE_SCALE);
-    });
+  function openPaper(p) {
+    if (current || !p.classList.contains('pile')) return;
+    current = p;
+    hintPick.classList.add('gone');
+    hintPick.style.opacity = 0;   /* инлайн перебивал класс .gone — теперь прячем явно */
+    backdrop.classList.add('show');
+    const s = fitScale(p);
+    p.style.setProperty('--openscale', s);
+    p.classList.remove('pile');
+    p.classList.add('open');
+    p.style.zIndex = 200;
+    p.style.top = '50%'; p.style.left = '50%';
+    p.style.setProperty('--rot', '0deg');
+    p.style.setProperty('--scale', s);
   }
-});
+  function closePaper() {
+    if (!current) return;
+    const p = current, c = PILE[p.dataset.paper];
+    p.classList.remove('open');
+    p.classList.add('pile');
+    p.style.top = c.top; p.style.left = c.left;
+    p.style.setProperty('--rot', c.rot + 'deg');
+    p.style.setProperty('--scale', PILE_SCALE);
+    backdrop.classList.remove('show');
+    hintPick.classList.remove('gone');
+    hintPick.style.opacity = .95;  /* вернуть подсказку над кучей */
+    setTimeout(() => { p.style.zIndex = p._z; }, 600);
+    current = null;
+  }
 
-/* ═══════════════════════════════════════════════════════════════
-   ПЕРСОНАЛИЗАЦИЯ ПО ССЫЛКЕ
-   ───────────────────────────────────────────────────────────────
-   Пока это мок: данные гостя лежат в GUESTS и выбираются по ?g=токен.
-   Структура намеренно повторяет будущие таблицы Supabase, чтобы
-   позже заменить GUESTS на запрос к базе, не трогая остальной фронт.
+  papers.forEach(p => {
+    p.addEventListener('click', e => {
+      if (p.classList.contains('open')) return;     // клики внутри открытой не мешают
+      openPaper(p);
+    });
+    /* открытие с клавиатуры (Enter / Пробел), только пока бумажка в куче */
+    p.addEventListener('keydown', e => {
+      if (p.classList.contains('open')) return;
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPaper(p); }
+    });
+    p.querySelector('.close').addEventListener('click', e => {
+      e.stopPropagation(); closePaper();
+    });
+  });
+  backdrop.addEventListener('click', closePaper);
+  addEventListener('keydown', e => { if (e.key === 'Escape') closePaper(); });
+  addEventListener('resize', () => {
+    PILE_SCALE = innerWidth < 600 ? .4 : .5;
+    if (current) {
+      const s = fitScale(current);
+      current.style.setProperty('--openscale', s);
+      current.style.setProperty('--scale', s);
+    } else if (opened) {
+      /* переразложить кучу под новый размер экрана */
+      papers.forEach(p => {
+        if (p.classList.contains('pile')) p.style.setProperty('--scale', PILE_SCALE);
+      });
+    }
+  });
 
-   Поля гостя:
-     persons     — [{name, gender:'m'|'f'}]  список приглашённых (1..N)
-     greeting    — (опц.) готовая строка приветствия, перебивает автосбор
-                   (напр. «Дорогая семья Ивановых»)
-     ticketNames — (опц.) имена для билета; иначе собираются из persons
-     address     — (опц.) 'ты' | 'вы'; иначе: один → «ты», двое+ → «вы»
-     plural      — (опц.) принудительное множественное число
-     showStay    — показывать ли пункт «Проживание» (по умолчанию true)
-   ═══════════════════════════════════════════════════════════════ */
-const GUESTS = {
-  /* пара, оба на «ты», проживание показываем */
-  'k7f3q9x2': { persons:[{name:'Рома',gender:'m'},{name:'Лиза',gender:'f'}], showStay:true },
-  /* родители — обращение на «вы», проживание не нужно */
-  'm2p8v5x1': { persons:[{name:'Мама',gender:'f'},{name:'Папа',gender:'m'}],
-                greeting:'Дорогие Мама и Папа', ticketNames:'Мама и Папа',
-                address:'вы', showStay:false },
-  /* один гость */
-  's0lo1122': { persons:[{name:'Анна',gender:'f'}], showStay:false },
-  /* семья — приветствие-оверрайд, но в анкете каждый отмечается сам */
-  'fam77xyz': { persons:[{name:'Игорь',gender:'m'},{name:'Оля',gender:'f'},{name:'Мия',gender:'f'}],
-                greeting:'Дорогая семья Ивановых', ticketNames:'Семья Ивановых', showStay:true }
-};
-/* фолбэк, если ссылка без токена или токен неизвестен — видно, что это демо */
-const DEMO = { persons:[{name:'Друзья',gender:'m'}], plural:true, showStay:true };
+  /* ═══════════════════════════════════════════════════════════════
+     ПЕРСОНАЛИЗАЦИЯ ПО ССЫЛКЕ
+     ───────────────────────────────────────────────────────────────
+     Данные гостя приходят из Supabase по ?g=токен (функция get_guest).
+     Пока ключи Supabase не заданы — берётся локальный мок GUESTS ниже
+     с тем же форматом, так что страница работает и без базы.
+  
+     Поля гостя:
+       persons     — [{name, gender:'m'|'f'}]  список приглашённых (1..N)
+       greeting    — (опц.) готовая строка приветствия, перебивает автосбор
+                     (напр. «Дорогая семья Ивановых»)
+       ticketNames — (опц.) имена для билета; иначе собираются из persons
+       address     — (опц.) 'ты' | 'вы'; иначе: один → «ты», двое+ → «вы»
+       plural      — (опц.) принудительное множественное число
+       showStay    — показывать ли пункт «Проживание» (по умолчанию true)
+     ═══════════════════════════════════════════════════════════════ */
+  const GUESTS = {
+    /* пара, оба на «ты», проживание показываем */
+    'k7f3q9x2': { persons: [{ name: 'Рома', gender: 'm' }, { name: 'Лиза', gender: 'f' }], showStay: true },
+    /* родители — обращение на «вы», проживание не нужно */
+    'm2p8v5x1': {
+      persons: [{ name: 'Мама', gender: 'f' }, { name: 'Папа', gender: 'm' }],
+      greeting: 'Дорогие Мама и Папа', ticketNames: 'Мама и Папа',
+      address: 'вы', showStay: false
+    },
+    /* один гость */
+    's0lo1122': { persons: [{ name: 'Анна', gender: 'f' }], showStay: false },
+    /* семья — приветствие-оверрайд, но в анкете каждый отмечается сам */
+    'fam77xyz': {
+      persons: [{ name: 'Игорь', gender: 'm' }, { name: 'Оля', gender: 'f' }, { name: 'Мия', gender: 'f' }],
+      greeting: 'Дорогая семья Ивановых', ticketNames: 'Семья Ивановых', showStay: true
+    }
+  };
+  /* фолбэк, если ссылка без токена или токен неизвестен — видно, что это демо */
+  const DEMO = { persons: [{ name: 'Друзья', gender: 'm' }], plural: true, showStay: true };
 
-function pickGuest(){
-  const token = new URLSearchParams(location.search).get('g');
-  return (token && GUESTS[token]) ? {token, ...GUESTS[token]} : {token:token||'demo', ...DEMO};
-}
-const guest = pickGuest();
+  /* ═══════════════════════════════════════════════════════════════
+     ПОДКЛЮЧЕНИЕ К SUPABASE
+     ───────────────────────────────────────────────────────────────
+     Вставь URL проекта и публичный anon-ключ (в дашборде: Settings → API).
+     Пока оба поля пустые — сайт работает на локальном моке GUESTS выше
+     и localStorage, как раньше. Заполнишь оба — данные и ответы пойдут
+     в реальную базу, больше ничего править не нужно.
+     anon-ключ публичный, его не страшно держать в коде: доступ к базе
+     закрыт на стороне Supabase (RLS + функции get_guest / submit_rsvp). */
+  const SUPABASE_URL = 'https://bflycjzqktnkzuyusfqw.supabase.co';   // напр. 'https://abcdefgh.supabase.co'
+  const SUPABASE_ANON_KEY = 'sb_publishable_4C3jZYLU-shsgdOehStuNw_dr9hoCuq';   // Publishable (sb_publishable_...) или legacy anon. НЕ Secret/service_role!
+  const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-/* ── грамматика: род / число / обращение ── */
-function joinNames(list){
-  if(list.length<=1) return list[0]||'';
-  return list.slice(0,-1).join(', ') + ' и ' + list[list.length-1];
-}
-const plural   = guest.plural ?? (guest.persons.length > 1);
-const addr     = guest.address || (plural ? 'вы' : 'ты');
-const PRON     = addr==='вы' ? {acc:'вас', imp:'Откройте'} : {acc:'тебя', imp:'Открой'};
-const names    = joinNames(guest.persons.map(p=>p.name));
-const greetWord= plural ? 'Дорогие' : (guest.persons[0].gender==='f' ? 'Дорогая' : 'Дорогой');
-const greeting = guest.greeting || `${greetWord} ${names}`;
-const ticketNames = guest.ticketNames || guest.persons.map(p=>p.name).join(' & ');
+  /* вызов RPC-функции Supabase обычным fetch — без установки SDK */
+  async function rpc(fn, params) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) throw new Error(`Supabase ${fn} → ${res.status} ${await res.text()}`);
+    const text = await res.text();            // submit_rsvp отвечает пустым телом (204)
+    return text ? JSON.parse(text) : null;
+  }
 
-/* ── подстановка в приглашение и билет ── */
-document.getElementById('inviteGreeting').textContent = greeting + '!';
-document.getElementById('inviteBody').textContent =
-  `С большой радостью приглашаем ${PRON.acc} разделить с нами `+
-  `один из самых счастливых дней нашей жизни — день нашей свадьбы.`;
-document.getElementById('inviteNote').textContent =
-  `Внутри конверта — ещё несколько бумажек. ${PRON.imp} каждую: `+
-  `там билет, план дня и анкета для ${PRON.acc}.`;
-document.getElementById('ticketGuests').textContent = ticketNames;
+  /* данные гостя + его прошлый ответ по токену. Возвращает объект или null. */
+  async function fetchGuest(token) {
+    if (!token) return null;
+    if (USE_SUPABASE) return await rpc('get_guest', { p_token: token });
+    /* мок: тот же формат, что вернула бы функция get_guest */
+    const g = GUESTS[token];
+    if (!g) return null;
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem('rsvp:' + token)); } catch (_) { }
+    return {
+      token,
+      greeting: g.greeting || null,
+      ticketNames: g.ticketNames || null,
+      address: g.address || null,
+      plural: g.plural || null,
+      showStay: g.showStay !== false,
+      persons: g.persons.map((p, i) => ({
+        id: i, name: p.name, gender: p.gender,
+        attending: saved ? (saved.persons[i]?.attending ?? null) : null
+      })),
+      response: saved ? {
+        transfer: saved.transfer, stay: saved.stay,
+        menu: saved.menu, updatedAt: saved.updatedAt
+      } : null
+    };
+  }
 
-/* ═══════════════════════════════════════════════════════════════
-   АНКЕТА — учитывает состав приглашения
-   ═══════════════════════════════════════════════════════════════ */
-const form       = document.getElementById('rsvp');
-const ifYes      = document.getElementById('ifYes');
-const stayRow    = document.getElementById('stayRow');
-const signZ      = document.getElementById('signZone');
-const sigName    = document.getElementById('sigName');
-const attendList = document.getElementById('attendList');
-const stamp      = document.getElementById('stamp');
-const msg        = document.getElementById('msg');
+  /* сохранение ответа: в Supabase — через submit_rsvp, иначе — в localStorage */
+  async function persistResponse(payload) {
+    if (USE_SUPABASE) {
+      await rpc('submit_rsvp', {
+        p_token: payload.token,
+        p_transfer: payload.transfer,
+        p_stay: payload.stay,
+        p_menu: payload.menu,
+        p_attendance: payload.persons.map(p => ({ id: p.id, attending: p.attending }))
+      });
+    } else {
+      localStorage.setItem('rsvp:' + payload.token, JSON.stringify(payload));
+    }
+  }
 
-/* имя(имена) гостя — известны из ссылки, показываем как заполненную строку */
-document.getElementById('guestName').textContent = names;
+  /* ═══════════════════════════════════════════════════════════════
+     Инициализация. Всё внутри async — чтобы дождаться ответа базы
+     до показа страницы (иначе мелькнули бы демо-имена).
+     ═══════════════════════════════════════════════════════════════ */
+  (async function init() {
+    const token = new URLSearchParams(location.search).get('g');
+    let data = null;
+    try { data = await fetchGuest(token); }
+    catch (err) { console.error('Не удалось загрузить гостя из Supabase:', err); }
+    /* неизвестный токен или ошибка сети — показываем демо, страница не ломается */
+    const guest = data || {
+      token: token || 'demo', ...DEMO,
+      persons: DEMO.persons.map((p, i) => ({ id: i, ...p })), response: null
+    };
 
-/* «Проживание» прячем, если для этого гостя не нужно */
-if(!guest.showStay && stayRow) stayRow.remove();
+    /* ── грамматика: род / число / обращение ── */
+    function joinNames(list) {
+      if (list.length <= 1) return list[0] || '';
+      return list.slice(0, -1).join(', ') + ' и ' + list[list.length - 1];
+    }
+    const plural = guest.plural ?? (guest.persons.length > 1);
+    const addr = guest.address || (plural ? 'вы' : 'ты');
+    const PRON = addr === 'вы' ? { acc: 'вас', imp: 'Откройте' } : { acc: 'тебя', imp: 'Открой' };
+    const names = joinNames(guest.persons.map(p => p.name));
+    const greetWord = plural ? 'Дорогие' : (guest.persons[0].gender === 'f' ? 'Дорогая' : 'Дорогой');
+    const greeting = guest.greeting || `${greetWord} ${names}`;
+    const ticketNames = guest.ticketNames || guest.persons.map(p => p.name).join(' & ');
 
-/* ответы: по человеку — присутствие; общие — трансфер/проживание/меню */
-const answers = { persons: guest.persons.map(()=>null) /* 'yes'|'no' */, transfer:'', stay:'' };
-const anyComing = () => answers.persons.some(v => v==='yes');
+    /* ── подстановка в приглашение и билет ── */
+    document.getElementById('inviteGreeting').textContent = greeting + '!';
+    document.getElementById('inviteBody').textContent =
+      `С большой радостью приглашаем ${PRON.acc} разделить с нами ` +
+      `один из самых счастливых дней нашей жизни — день нашей свадьбы.`;
+    document.getElementById('inviteNote').textContent =
+      `Внутри конверта — ещё несколько бумажек. ${PRON.imp} каждую: ` +
+      `там билет, план дня и анкета для ${PRON.acc}.`;
+    document.getElementById('ticketGuests').textContent = ticketNames;
 
-/* строка присутствия на каждого приглашённого */
-guest.persons.forEach((person,i)=>{
-  const row = document.createElement('div');
-  row.className = 'qrow';
-  row.innerHTML =
-    `<span class="q">${person.name}</span>`+
-    `<div class="choice" data-group="attend" data-person="${i}">`+
-      `<button type="button" data-val="yes">Буду</button>`+
-      `<button type="button" data-val="no">Не буду</button>`+
-    `</div>`;
-  attendList.appendChild(row);
-});
+    /* данные готовы — можно показывать страницу (шрифты снимут свой флаг сами) */
+    window.__ready.guest = true; window.__reveal();
 
-/* подпись ужимается по ширине строки, чтобы длинные имена не обрезались */
-function setSig(text){
-  sigName.style.fontSize='';
-  sigName.textContent = text;
-  const max=37;                       // базовый размер, px
-  sigName.style.fontSize=max+'px';
-  const avail=sigName.clientWidth, full=sigName.scrollWidth;
-  if(full>avail && avail>0)
-    sigName.style.fontSize=Math.max(17,max*avail/full)+'px';
-}
+    /* ═══════════════════════════════════════════════════════════════
+       АНКЕТА — учитывает состав приглашения
+       ═══════════════════════════════════════════════════════════════ */
+    const form = document.getElementById('rsvp');
+    const ifYes = document.getElementById('ifYes');
+    const stayRow = document.getElementById('stayRow');
+    const signZ = document.getElementById('signZone');
+    const sigName = document.getElementById('sigName');
+    const attendList = document.getElementById('attendList');
+    const stamp = document.getElementById('stamp');
+    const msg = document.getElementById('msg');
 
-/* дата в зоне подписи */
-signZ.querySelector('.date').textContent =
-  new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+    /* имя(имена) гостя — известны из ссылки, показываем как заполненную строку */
+    document.getElementById('guestName').textContent = names;
 
-/* режим анкеты: 'edit' — можно заполнять, 'view' — ответ уже дан, поля заблокированы */
-let mode = 'edit';
-let savedAt = null;
+    /* «Проживание» прячем, если для этого гостя не нужно */
+    if (!guest.showStay && stayRow) stayRow.remove();
 
-/* ── слой хранения ответов ──────────────────────────────────────
-   Пока это localStorage (мок «вернувшегося гостя»). Позже эти две
-   функции станут запросами к Supabase: get_guest вернёт прошлый
-   ответ, submit_rsvp его сохранит — остальной код не изменится. */
-const RSVP_KEY = t => 'rsvp:' + t;
-function loadResponse(token){
-  try { return JSON.parse(localStorage.getItem(RSVP_KEY(token))); }
-  catch(_){ return null; }
-}
-function saveResponse(payload){
-  localStorage.setItem(RSVP_KEY(payload.token), JSON.stringify(payload));
-}
+    /* ответы: по человеку — присутствие; общие — трансфер/проживание/меню */
+    const answers = { persons: guest.persons.map(() => null) /* 'yes'|'no' */, transfer: '', stay: '' };
+    const anyComing = () => answers.persons.some(v => v === 'yes');
 
-/* обработчик всех групп-переключателей: attend (по человеку), transfer, stay */
-document.querySelectorAll('.p-form .choice').forEach(group=>{
-  group.querySelectorAll('button').forEach(btn=>{
-    btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      if(mode==='view') return;
-      group.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
-      btn.setAttribute('aria-pressed','true');
-      msg.textContent='';
-      const key = group.dataset.group;
-      if(key==='attend'){
-        answers.persons[+group.dataset.person] = btn.dataset.val;
-        const coming = anyComing();
-        ifYes.classList.toggle('show', coming);
-        /* «как будто подписывают документ» — имена проявляются подписью */
-        if(coming){
-          setSig(names);
-          signZ.classList.remove('signed');   // перезапуск анимации прорисовки
-          void signZ.offsetWidth;
-        }
-        signZ.classList.toggle('signed', coming);
-        if(!coming){
-          answers.transfer=''; answers.stay='';
-          ifYes.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
-        }
+    /* строка присутствия на каждого приглашённого */
+    guest.persons.forEach((person, i) => {
+      const row = document.createElement('div');
+      row.className = 'qrow';
+      row.innerHTML =
+        `<span class="q">${person.name}</span>` +
+        `<div class="choice" data-group="attend" data-person="${i}">` +
+        `<button type="button" data-val="yes">Буду</button>` +
+        `<button type="button" data-val="no">Не буду</button>` +
+        `</div>`;
+      attendList.appendChild(row);
+    });
+
+    /* подпись ужимается по ширине строки, чтобы длинные имена не обрезались */
+    function setSig(text) {
+      sigName.style.fontSize = '';
+      sigName.textContent = text;
+      const max = 37;                       // базовый размер, px
+      sigName.style.fontSize = max + 'px';
+      const avail = sigName.clientWidth, full = sigName.scrollWidth;
+      if (full > avail && avail > 0)
+        sigName.style.fontSize = Math.max(17, max * avail / full) + 'px';
+    }
+
+    /* дата в зоне подписи */
+    signZ.querySelector('.date').textContent =
+      new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+
+    /* режим анкеты: 'edit' — можно заполнять, 'view' — ответ уже дан, поля заблокированы */
+    let mode = 'edit';
+    let savedAt = null;
+
+    /* обработчик всех групп-переключателей: attend (по человеку), transfer, stay */
+    document.querySelectorAll('.p-form .choice').forEach(group => {
+      group.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          if (mode === 'view') return;
+          group.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+          btn.setAttribute('aria-pressed', 'true');
+          msg.textContent = '';
+          const key = group.dataset.group;
+          if (key === 'attend') {
+            answers.persons[+group.dataset.person] = btn.dataset.val;
+            const coming = anyComing();
+            ifYes.classList.toggle('show', coming);
+            /* «как будто подписывают документ» — имена проявляются подписью */
+            if (coming) {
+              setSig(names);
+              signZ.classList.remove('signed');   // перезапуск анимации прорисовки
+              void signZ.offsetWidth;
+            }
+            signZ.classList.toggle('signed', coming);
+            if (!coming) {
+              answers.transfer = ''; answers.stay = '';
+              ifYes.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+            }
+          } else {
+            answers[key] = btn.dataset.val;
+          }
+        });
+      });
+    });
+
+    /* не дать клику по полям закрыть/открыть бумажку */
+    form.querySelectorAll('input,textarea,button').forEach(el => {
+      el.addEventListener('click', e => e.stopPropagation());
+    });
+
+    /* блокировка / разблокировка полей анкеты */
+    function lockFields(lock) {
+      document.querySelectorAll('#rsvp textarea,#rsvp .choice button')
+        .forEach(el => { el.disabled = lock; el.style.opacity = lock ? .75 : ''; });
+    }
+
+    /* выбрать нужную кнопку в группе (для восстановления прошлого ответа) */
+    function pressChoice(sel) {
+      const b = document.querySelector(sel);
+      if (!b) return;
+      b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+    }
+
+    /* восстановить прошлый ответ в интерфейсе */
+    function prefill(resp) {
+      (resp.persons || []).forEach((p, i) => {
+        const val = p.attending ? 'yes' : 'no';
+        answers.persons[i] = val;
+        pressChoice(`#attendList .choice[data-person="${i}"] button[data-val="${val}"]`);
+      });
+      if (resp.transfer) {
+        answers.transfer = resp.transfer;
+        pressChoice(`.choice[data-group="transfer"] button[data-val="${resp.transfer}"]`);
+      }
+      if (resp.stay && guest.showStay) {
+        answers.stay = resp.stay;
+        pressChoice(`.choice[data-group="stay"] button[data-val="${resp.stay}"]`);
+      }
+      if (resp.menu) document.getElementById('gmenu').value = resp.menu;
+      const coming = anyComing();
+      ifYes.classList.toggle('show', coming);
+      if (coming) { setSig(names); signZ.classList.add('signed'); }
+    }
+
+    /* режим просмотра: ответ дан, поля заблокированы, кнопка → «Изменить» */
+    function enterView(justSaved) {
+      mode = 'view';
+      lockFields(true);
+      const coming = anyComing();
+      stamp.querySelector('.big').innerHTML = coming
+        ? 'ПОДТВЕРЖ-<br>ДЕНО' : 'ПРИНЯТО<br>К СВЕДЕНИЮ';
+      stamp.classList.add('show');
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Изменить ответ';
+      if (justSaved) {
+        msg.innerHTML = coming
+          ? 'Спасибо! Ваш ответ записан — уже считаем дни до встречи. ❥'
+          : 'Спасибо, что дали знать. Будем скучать ❥';
       } else {
-        answers[key] = btn.dataset.val;
+        const when = savedAt
+          ? ' ' + new Date(savedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
+          : '';
+        msg.textContent = `Вы уже отвечали${when}. Ответ можно изменить.`;
+      }
+    }
+
+    /* режим редактирования: поля активны, кнопка → «Заверить / Обновить» */
+    function enterEdit() {
+      mode = 'edit';
+      lockFields(false);
+      stamp.classList.remove('show');
+      sendBtn.disabled = false;
+      sendBtn.textContent = savedAt ? 'Обновить ответ' : 'Заверить анкету';
+      msg.textContent = '';
+    }
+
+    /* кнопка: в просмотре — разблокировать поля; в редактировании — сохранить */
+    const sendBtn = document.getElementById('sendBtn');
+
+    sendBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+
+      if (mode === 'view') { enterEdit(); return; }
+
+      /* по каждому приглашённому должна стоять отметка */
+      if (answers.persons.some(v => !v)) {
+        msg.textContent = guest.persons.length > 1
+          ? 'Отметьте, пожалуйста, по каждому — будет он или нет.'
+          : 'Отметьте, пожалуйста, сможете ли прийти.';
+        return;
+      }
+
+      const coming = anyComing();
+
+      /* payload → уходит в Supabase (submit_rsvp) или в localStorage */
+      const payload = {
+        token: guest.token,
+        persons: guest.persons.map((p, i) => ({ id: p.id, name: p.name, attending: answers.persons[i] === 'yes' })),
+        transfer: coming ? answers.transfer : '',
+        stay: (coming && guest.showStay) ? answers.stay : '',
+        menu: coming ? document.getElementById('gmenu').value.trim() : '',
+        updatedAt: new Date().toISOString()
+      };
+
+      const prevLabel = sendBtn.textContent;
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Сохраняем…';
+      try {
+        await persistResponse(payload);
+        savedAt = payload.updatedAt;
+        enterView(true);
+      } catch (err) {
+        console.error('Не удалось сохранить ответ:', err);
+        sendBtn.disabled = false;
+        sendBtn.textContent = prevLabel;
+        msg.textContent = 'Не получилось сохранить — проверьте интернет и попробуйте ещё раз.';
       }
     });
-  });
-});
 
-/* не дать клику по полям закрыть/открыть бумажку */
-form.querySelectorAll('input,textarea,button').forEach(el=>{
-  el.addEventListener('click', e=>e.stopPropagation());
-});
-
-/* блокировка / разблокировка полей анкеты */
-function lockFields(lock){
-  document.querySelectorAll('#rsvp textarea,#rsvp .choice button')
-    .forEach(el=>{ el.disabled = lock; el.style.opacity = lock ? .75 : ''; });
-}
-
-/* выбрать нужную кнопку в группе (для восстановления прошлого ответа) */
-function pressChoice(sel){
-  const b = document.querySelector(sel);
-  if(!b) return;
-  b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
-  b.setAttribute('aria-pressed','true');
-}
-
-/* восстановить прошлый ответ в интерфейсе */
-function prefill(resp){
-  (resp.persons||[]).forEach((p,i)=>{
-    const val = p.attending ? 'yes' : 'no';
-    answers.persons[i] = val;
-    pressChoice(`#attendList .choice[data-person="${i}"] button[data-val="${val}"]`);
-  });
-  if(resp.transfer){ answers.transfer = resp.transfer;
-    pressChoice(`.choice[data-group="transfer"] button[data-val="${resp.transfer}"]`); }
-  if(resp.stay && guest.showStay){ answers.stay = resp.stay;
-    pressChoice(`.choice[data-group="stay"] button[data-val="${resp.stay}"]`); }
-  if(resp.menu) document.getElementById('gmenu').value = resp.menu;
-  const coming = anyComing();
-  ifYes.classList.toggle('show', coming);
-  if(coming){ setSig(names); signZ.classList.add('signed'); }
-}
-
-/* режим просмотра: ответ дан, поля заблокированы, кнопка → «Изменить» */
-function enterView(justSaved){
-  mode = 'view';
-  lockFields(true);
-  const coming = anyComing();
-  stamp.querySelector('.big').innerHTML = coming
-      ? 'ПОДТВЕРЖ-<br>ДЕНО' : 'ПРИНЯТО<br>К СВЕДЕНИЮ';
-  stamp.classList.add('show');
-  sendBtn.textContent = 'Изменить ответ';
-  if(justSaved){
-    msg.innerHTML = coming
-      ? 'Спасибо! Ваш ответ записан — уже считаем дни до встречи. ❥'
-      : 'Спасибо, что дали знать. Будем скучать ❥';
-  } else {
-    const when = savedAt
-      ? ' ' + new Date(savedAt).toLocaleDateString('ru-RU',{day:'numeric',month:'long'})
-      : '';
-    msg.textContent = `Вы уже отвечали${when}. Ответ можно изменить.`;
-  }
-}
-
-/* режим редактирования: поля активны, кнопка → «Заверить / Обновить» */
-function enterEdit(){
-  mode = 'edit';
-  lockFields(false);
-  stamp.classList.remove('show');
-  sendBtn.textContent = savedAt ? 'Обновить ответ' : 'Заверить анкету';
-  msg.textContent = '';
-}
-
-/* кнопка: в просмотре — разблокировать поля; в редактировании — сохранить */
-const sendBtn = document.getElementById('sendBtn');
-
-sendBtn.addEventListener('click', e=>{
-  e.stopPropagation();
-
-  if(mode === 'view'){ enterEdit(); return; }
-
-  /* по каждому приглашённому должна стоять отметка */
-  if(answers.persons.some(v=>!v)){
-    msg.textContent = guest.persons.length>1
-      ? 'Отметьте, пожалуйста, по каждому — будет он или нет.'
-      : 'Отметьте, пожалуйста, сможете ли прийти.';
-    return;
-  }
-
-  const coming = anyComing();
-
-  /* payload — ровно то, что позже уйдёт в Supabase (submit_rsvp) */
-  const payload = {
-    token: guest.token,
-    persons: guest.persons.map((p,i)=>({ name:p.name, attending: answers.persons[i]==='yes' })),
-    transfer: coming ? answers.transfer : '',
-    stay:     (coming && guest.showStay) ? answers.stay : '',
-    menu:     coming ? document.getElementById('gmenu').value.trim() : '',
-    updatedAt: new Date().toISOString()
-  };
-  saveResponse(payload);
-  savedAt = payload.updatedAt;
-  console.log('RSVP payload (мок, пойдёт в Supabase):', payload);
-
-  enterView(true);
-});
-
-/* ── старт анкеты: если гость уже отвечал по этой ссылке — показать ответ ── */
-const savedResp = loadResponse(guest.token);
-if(savedResp){
-  savedAt = savedResp.updatedAt || null;
-  prefill(savedResp);
-  enterView(false);
-} else {
-  enterEdit();
-}
+    /* ── старт анкеты: если гость уже отвечал — показать его ответ ── */
+    if (guest.response) {
+      savedAt = guest.response.updatedAt || null;
+      prefill({
+        persons: guest.persons.map(p => ({ attending: p.attending })),
+        transfer: guest.response.transfer,
+        stay: guest.response.stay,
+        menu: guest.response.menu
+      });
+      enterView(false);
+    } else {
+      enterEdit();
+    }
+  })();
 </script>
