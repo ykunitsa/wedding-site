@@ -433,6 +433,11 @@ body::after{
   padding:4px 2px;
 }
 .p-form input.tx::placeholder{color:var(--iv-mut);font-weight:400;}
+/* имя гостя — известно из ссылки, показываем как заполненную строку */
+.p-form .guest-name{
+  border-bottom:1.5px solid var(--iv-ink);padding:5px 2px;min-height:1.5em;
+  font-family:var(--font-sans);font-size:1.05rem;font-weight:700;color:var(--iv-ink);
+}
 /* таблица вопросов */
 .p-form .qtable{border:1.5px solid var(--iv-line);}
 .p-form .qrow{
@@ -624,12 +629,12 @@ body::after{
     <span class="tag">приглашение</span>
     <button class="close" aria-label="закрыть">✕</button>
     <div class="sheet">
-      <h2>Дорогие Лиза и Максат!</h2>
+      <h2 id="inviteGreeting">Дорогие Лиза и Максат!</h2>
       <p class="orn">· ❀ ·</p>
-      <p>С большой радостью приглашаем вас разделить с нами
+      <p id="inviteBody">С большой радостью приглашаем вас разделить с нами
          один из самых счастливых дней нашей жизни — день нашей свадьбы.</p>
       <p class="orn">·</p>
-      <p class="note">
+      <p class="note" id="inviteNote">
         Внутри конверта — ещё несколько бумажек.
         Откройте каждую: там билет, план дня и анкета для вас.</p>
     </div>
@@ -666,8 +671,8 @@ body::after{
           <span>Открыть на карте →</span>
         </a>
         <div class="foot">
-          <!-- [ПРАВИТЬ] имена гостей -->
-          <span class="guests">Максат &amp; Лиза</span>
+          <!-- имя(имена) гостя — подставляется из ссылки -->
+          <span class="guests" id="ticketGuests">Максат &amp; Лиза</span>
         </div>
       </div>
       <div class="stub">
@@ -718,19 +723,14 @@ body::after{
 
       <div id="rsvp">
         <div class="billed">
-          <label class="lbl" for="gname">Гость <span class="i">— имя и фамилия</span></label>
-          <input class="tx" id="gname" type="text" autocomplete="name"
-                 placeholder="напишите здесь...">
+          <span class="lbl">Гость <span class="i">— по приглашению</span></span>
+          <div class="guest-name" id="guestName">—</div>
         </div>
 
         <div class="qtable">
-          <div class="qrow">
-            <span class="q">Присутствие на торжестве</span>
-            <div class="choice" data-group="attend">
-              <button type="button" data-val="Будем">Будем!</button>
-              <button type="button" data-val="Не сможем">Не сможем</button>
-            </div>
-          </div>
+          <!-- строки присутствия — по одной на каждого приглашённого, генерятся из данных гостя -->
+          <div id="attendList"></div>
+
           <div class="if-yes" id="ifYes">
             <div class="qrow">
               <span class="q">Трансфер <span class="i">от точки сбора</span></span>
@@ -739,7 +739,7 @@ body::after{
                 <button type="button" data-val="не нужен">Сами</button>
               </div>
             </div>
-            <div class="qrow">
+            <div class="qrow" id="stayRow">
               <span class="q">Проживание <span class="i">ночь в усадьбе</span></span>
               <div class="choice" data-group="stay">
                 <button type="button" data-val="нужно">Да</button>
@@ -1001,65 +1001,146 @@ addEventListener('resize', ()=>{
   }
 });
 
-/* ── логика анкеты ── */
-const form   = document.getElementById('rsvp');
-const ifYes  = document.getElementById('ifYes');
-const signZ  = document.getElementById('signZone');
-const sigName = document.getElementById('sigName');
-const gname  = document.getElementById('gname');
+/* ═══════════════════════════════════════════════════════════════
+   ПЕРСОНАЛИЗАЦИЯ ПО ССЫЛКЕ
+   ───────────────────────────────────────────────────────────────
+   Пока это мок: данные гостя лежат в GUESTS и выбираются по ?g=токен.
+   Структура намеренно повторяет будущие таблицы Supabase, чтобы
+   позже заменить GUESTS на запрос к базе, не трогая остальной фронт.
 
-/* подпись формируется как «И. Фамилия» из введённого имени */
-function sigFrom(raw){
-  const words = raw.trim().split(/\s+/).filter(Boolean);
-  if(words.length===0) return 'будем!';
-  if(words.length===1) return words[0];
-  const initial = words[0][0].toUpperCase();
-  const surname = words.slice(1).join(' ');
-  return initial + '. ' + surname;
+   Поля гостя:
+     persons     — [{name, gender:'m'|'f'}]  список приглашённых (1..N)
+     greeting    — (опц.) готовая строка приветствия, перебивает автосбор
+                   (напр. «Дорогая семья Ивановых»)
+     ticketNames — (опц.) имена для билета; иначе собираются из persons
+     address     — (опц.) 'ты' | 'вы'; иначе: один → «ты», двое+ → «вы»
+     plural      — (опц.) принудительное множественное число
+     showStay    — показывать ли пункт «Проживание» (по умолчанию true)
+   ═══════════════════════════════════════════════════════════════ */
+const GUESTS = {
+  /* пара, оба на «ты», проживание показываем */
+  'k7f3q9x2': { persons:[{name:'Рома',gender:'m'},{name:'Лиза',gender:'f'}], showStay:true },
+  /* родители — обращение на «вы», проживание не нужно */
+  'm2p8v5x1': { persons:[{name:'Мама',gender:'f'},{name:'Папа',gender:'m'}],
+                greeting:'Дорогие Мама и Папа', ticketNames:'Мама и Папа',
+                address:'вы', showStay:false },
+  /* один гость */
+  's0lo1122': { persons:[{name:'Анна',gender:'f'}], showStay:false },
+  /* семья — приветствие-оверрайд, но в анкете каждый отмечается сам */
+  'fam77xyz': { persons:[{name:'Игорь',gender:'m'},{name:'Оля',gender:'f'},{name:'Мия',gender:'f'}],
+                greeting:'Дорогая семья Ивановых', ticketNames:'Семья Ивановых', showStay:true }
+};
+/* фолбэк, если ссылка без токена или токен неизвестен — видно, что это демо */
+const DEMO = { persons:[{name:'Друзья',gender:'m'}], plural:true, showStay:true };
+
+function pickGuest(){
+  const token = new URLSearchParams(location.search).get('g');
+  return (token && GUESTS[token]) ? {token, ...GUESTS[token]} : {token:token||'demo', ...DEMO};
 }
-/* подпись ужимается по ширине строки, чтобы длинное имя не обрезалось */
+const guest = pickGuest();
+
+/* ── грамматика: род / число / обращение ── */
+function joinNames(list){
+  if(list.length<=1) return list[0]||'';
+  return list.slice(0,-1).join(', ') + ' и ' + list[list.length-1];
+}
+const plural   = guest.plural ?? (guest.persons.length > 1);
+const addr     = guest.address || (plural ? 'вы' : 'ты');
+const PRON     = addr==='вы' ? {acc:'вас', imp:'Откройте'} : {acc:'тебя', imp:'Открой'};
+const names    = joinNames(guest.persons.map(p=>p.name));
+const greetWord= plural ? 'Дорогие' : (guest.persons[0].gender==='f' ? 'Дорогая' : 'Дорогой');
+const greeting = guest.greeting || `${greetWord} ${names}`;
+const ticketNames = guest.ticketNames || guest.persons.map(p=>p.name).join(' & ');
+
+/* ── подстановка в приглашение и билет ── */
+document.getElementById('inviteGreeting').textContent = greeting + '!';
+document.getElementById('inviteBody').textContent =
+  `С большой радостью приглашаем ${PRON.acc} разделить с нами `+
+  `один из самых счастливых дней нашей жизни — день нашей свадьбы.`;
+document.getElementById('inviteNote').textContent =
+  `Внутри конверта — ещё несколько бумажек. ${PRON.imp} каждую: `+
+  `там билет, план дня и анкета для ${PRON.acc}.`;
+document.getElementById('ticketGuests').textContent = ticketNames;
+
+/* ═══════════════════════════════════════════════════════════════
+   АНКЕТА — учитывает состав приглашения
+   ═══════════════════════════════════════════════════════════════ */
+const form       = document.getElementById('rsvp');
+const ifYes      = document.getElementById('ifYes');
+const stayRow    = document.getElementById('stayRow');
+const signZ      = document.getElementById('signZone');
+const sigName    = document.getElementById('sigName');
+const attendList = document.getElementById('attendList');
+const stamp      = document.getElementById('stamp');
+const msg        = document.getElementById('msg');
+
+/* имя(имена) гостя — известны из ссылки, показываем как заполненную строку */
+document.getElementById('guestName').textContent = names;
+
+/* «Проживание» прячем, если для этого гостя не нужно */
+if(!guest.showStay && stayRow) stayRow.remove();
+
+/* ответы: по человеку — присутствие; общие — трансфер/проживание/меню */
+const answers = { persons: guest.persons.map(()=>null) /* 'yes'|'no' */, transfer:'', stay:'' };
+const anyComing = () => answers.persons.some(v => v==='yes');
+
+/* строка присутствия на каждого приглашённого */
+guest.persons.forEach((person,i)=>{
+  const row = document.createElement('div');
+  row.className = 'qrow';
+  row.innerHTML =
+    `<span class="q">${person.name}</span>`+
+    `<div class="choice" data-group="attend" data-person="${i}">`+
+      `<button type="button" data-val="yes">Буду</button>`+
+      `<button type="button" data-val="no">Не буду</button>`+
+    `</div>`;
+  attendList.appendChild(row);
+});
+
+/* подпись ужимается по ширине строки, чтобы длинные имена не обрезались */
 function setSig(text){
   sigName.style.fontSize='';
   sigName.textContent = text;
-  const max=37;          // базовый размер, px (~2.3rem)
+  const max=37;                       // базовый размер, px
   sigName.style.fontSize=max+'px';
   const avail=sigName.clientWidth, full=sigName.scrollWidth;
   if(full>avail && avail>0)
     sigName.style.fontSize=Math.max(17,max*avail/full)+'px';
 }
-const stamp  = document.getElementById('stamp');
-const msg    = document.getElementById('msg');
-const thanks = document.getElementById('thanks');
-const ans = {attend:'',transfer:'',stay:''};
 
 /* дата в зоне подписи */
 signZ.querySelector('.date').textContent =
   new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
 
+let sealed = false;
+
+/* обработчик всех групп-переключателей: attend (по человеку), transfer, stay */
 document.querySelectorAll('.p-form .choice').forEach(group=>{
-  const key=group.dataset.group;
   group.querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click', e=>{
       e.stopPropagation();
+      if(sealed) return;
       group.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
       btn.setAttribute('aria-pressed','true');
-      ans[key]=btn.dataset.val;
       msg.textContent='';
+      const key = group.dataset.group;
       if(key==='attend'){
-        const coming = btn.dataset.val==='Будем';
+        answers.persons[+group.dataset.person] = btn.dataset.val;
+        const coming = anyComing();
         ifYes.classList.toggle('show', coming);
-        /* «как будто подписывают документ» — имя гостя проявляется как подпись */
+        /* «как будто подписывают документ» — имена проявляются подписью */
         if(coming){
-          setSig(sigFrom(gname.value));
-          /* перезапуск анимации прорисовки */
-          signZ.classList.remove('signed');
+          setSig(names);
+          signZ.classList.remove('signed');   // перезапуск анимации прорисовки
           void signZ.offsetWidth;
         }
         signZ.classList.toggle('signed', coming);
         if(!coming){
-          ans.transfer=''; ans.stay='';
+          answers.transfer=''; answers.stay='';
           ifYes.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
         }
+      } else {
+        answers[key] = btn.dataset.val;
       }
     });
   });
@@ -1070,25 +1151,32 @@ form.querySelectorAll('input,textarea,button').forEach(el=>{
   el.addEventListener('click', e=>e.stopPropagation());
 });
 
-/* живое обновление подписи при вводе имени, если уже выбрано «Будем» */
-gname.addEventListener('input', ()=>{
-  if(signZ.classList.contains('signed'))
-    setSig(sigFrom(gname.value));
-});
-
 /* заверение анкеты — по клику (submit формы в песочнице блокируется) */
 const sendBtn = document.getElementById('sendBtn');
-let sealed = false;
 
 sendBtn.addEventListener('click', e=>{
   e.stopPropagation();
   if(sealed) return;
 
-  const name=document.getElementById('gname').value.trim();
-  if(!name){ msg.textContent='Впишите, пожалуйста, имя.'; return; }
-  if(!ans.attend){ msg.textContent='Отметьте, сможете ли вы прийти.'; return; }
+  /* по каждому приглашённому должна стоять отметка */
+  if(answers.persons.some(v=>!v)){
+    msg.textContent = guest.persons.length>1
+      ? 'Отметьте, пожалуйста, по каждому — будет он или нет.'
+      : 'Отметьте, пожалуйста, сможете ли прийти.';
+    return;
+  }
 
-  const coming = ans.attend==='Будем';
+  const coming = anyComing();
+
+  /* payload — ровно то, что позже уйдёт в Supabase (submit_rsvp) */
+  const payload = {
+    token: guest.token,
+    persons: guest.persons.map((p,i)=>({ name:p.name, attending: answers.persons[i]==='yes' })),
+    transfer: coming ? answers.transfer : '',
+    stay:     (coming && guest.showStay) ? answers.stay : '',
+    menu:     coming ? document.getElementById('gmenu').value.trim() : ''
+  };
+  console.log('RSVP payload (мок, пойдёт в Supabase):', payload);
 
   /* штамп впечатывается и остаётся на бланке */
   stamp.querySelector('.big').innerHTML = coming
@@ -1103,7 +1191,7 @@ sendBtn.addEventListener('click', e=>{
       ? 'Спасибо! Ваш ответ записан — уже считаем дни до встречи. ❥'
       : 'Спасибо, что дали знать. Будем скучать ❥';
   /* блокируем поля от изменений после заверения */
-  document.querySelectorAll('#rsvp input,#rsvp textarea,#rsvp .choice button')
+  document.querySelectorAll('#rsvp textarea,#rsvp .choice button')
     .forEach(el=>{ el.disabled=true; el.style.opacity=.75; });
 });
 </script>
