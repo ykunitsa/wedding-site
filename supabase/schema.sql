@@ -10,12 +10,17 @@
 create table if not exists guests (
   id           bigint generated always as identity primary key,
   token        text unique not null,          -- случайный код из ссылки ?g=...
+  label        text,                           -- ПОМЕТКА ДЛЯ ТЕБЯ: кто это («Рома и Лиза — с универа», «Мама и Папа мои»). Гостю не показывается.
   greeting     text,                           -- переопределение приветствия («Дорогая семья Ивановых»)
   ticket_names text,                           -- имена для билета; если пусто — соберутся из персон
   address      text check (address in ('ты','вы')),  -- обращение; если пусто — по числу персон
   show_stay    boolean not null default true,  -- показывать ли пункт «Проживание»
   created_at   timestamptz not null default now()
 );
+
+-- Если таблица уже создана раньше — create table её не тронет, поэтому
+-- добавляем колонку отдельно (безопасно запускать повторно).
+alter table guests add column if not exists label text;
 
 -- один ряд = один приглашённый человек внутри приглашения
 create table if not exists guest_persons (
@@ -127,8 +132,16 @@ grant execute on function submit_rsvp(text, text, text, text, jsonb)   to anon, 
 -- ─── УДОБНЫЙ ПРОСМОТР ОТВЕТОВ (для дашборда) ──────────────────────────
 -- Показывает по строке на каждого человека: кто идёт + общий ответ.
 -- Смотреть в Table Editor. Гостям недоступно (грантов нет).
-create or replace view answers_overview as
+-- security_invoker = on: view выполняется от имени вызывающего, а не владельца,
+-- поэтому RLS применяется к нему (закрывает предупреждение линтера Supabase).
+-- drop перед create: create or replace не умеет менять порядок колонок,
+-- поэтому при изменении набора колонок витрину пересоздаём с нуля.
+drop view if exists answers_overview;
+create view answers_overview
+  with (security_invoker = on)
+as
   select g.token,
+         g.label,
          coalesce(g.ticket_names, string_agg(p.name, ', ')) as invite,
          p.name,
          p.attending,
@@ -141,46 +154,30 @@ create or replace view answers_overview as
 
 
 -- ═══════════════════════════════════════════════════════════════════════
---  ПРИМЕР: как заводить гостей
---  Ниже — те же 4 демо-ссылки, что были на фронте. Можно запустить как есть
---  для проверки, а потом добавлять своих по этому образцу.
---  ВАЖНО: для реальных гостей ставь СЛУЧАЙНЫЙ token (не имя!), напр.
---         сгенерировать: select encode(gen_random_bytes(6), 'hex');
+--  КАК ЗАВОДИТЬ ГОСТЕЙ
+--  Демо-данные убраны намеренно: реальные гости заводятся отдельным
+--  скриптом в SQL Editor, а этот файл — только структура базы. Так повторный
+--  прогон схемы не плодит тестовых гостей.
+--  ВАЖНО: token всегда СЛУЧАЙНЫЙ (не имя!). Генерится сам через gen_random_bytes.
+--
+--  Образец нового приглашения (раскомментируй и поправь):
+--
+--  -- пара
+--  with g as (
+--    insert into guests (token, label, ticket_names, show_stay)
+--    values (encode(gen_random_bytes(4),'hex'), 'Кто это (пометка для меня)', 'Имена на билет', true)
+--    returning id
+--  )
+--  insert into guest_persons (guest_id, name, gender, sort_order)
+--  select id, x.name, x.gender, x.ord
+--  from g, (values ('Имя1','m',1), ('Имя2','f',2)) as x(name, gender, ord);
+--
+--  -- один гость
+--  with g as (
+--    insert into guests (token, label)
+--    values (encode(gen_random_bytes(4),'hex'), 'Кто это (пометка для меня)')
+--    returning id
+--  )
+--  insert into guest_persons (guest_id, name, gender, sort_order)
+--  select id, 'Имя', 'f', 1 from g;
 -- ═══════════════════════════════════════════════════════════════════════
-
--- пара, оба на «ты», проживание показываем
-with g as (
-  insert into guests (token, show_stay) values ('k7f3q9x2', true)
-  on conflict (token) do nothing returning id
-)
-insert into guest_persons (guest_id, name, gender, sort_order)
-select id, x.name, x.gender, x.ord
-from g, (values ('Рома','m',1), ('Лиза','f',2)) as x(name, gender, ord);
-
--- родители — обращение на «вы», проживание не нужно
-with g as (
-  insert into guests (token, greeting, ticket_names, address, show_stay)
-  values ('m2p8v5x1', 'Дорогие Мама и Папа', 'Мама и Папа', 'вы', false)
-  on conflict (token) do nothing returning id
-)
-insert into guest_persons (guest_id, name, gender, sort_order)
-select id, x.name, x.gender, x.ord
-from g, (values ('Мама','f',1), ('Папа','m',2)) as x(name, gender, ord);
-
--- один гость
-with g as (
-  insert into guests (token, show_stay) values ('s0lo1122', false)
-  on conflict (token) do nothing returning id
-)
-insert into guest_persons (guest_id, name, gender, sort_order)
-select id, 'Анна', 'f', 1 from g;
-
--- семья — своё приветствие, но в анкете каждый отмечается сам
-with g as (
-  insert into guests (token, greeting, ticket_names, show_stay)
-  values ('fam77xyz', 'Дорогая семья Ивановых', 'Семья Ивановых', true)
-  on conflict (token) do nothing returning id
-)
-insert into guest_persons (guest_id, name, gender, sort_order)
-select id, x.name, x.gender, x.ord
-from g, (values ('Игорь','m',1), ('Оля','f',2), ('Мия','f',3)) as x(name, gender, ord);
