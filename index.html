@@ -610,7 +610,7 @@
     display: flex;
     align-items: stretch;
     color: var(--tk-ink);
-    background: radial-gradient(125% 135% at 50% 45%, #f7f0dd 52%, #ece1c6 100%);
+    background: radial-gradient(125% 135% at 50% 45%, #f1f2e6 52%, #dfe3d2 100%);
     border-radius: 14px;
     box-shadow: 0 22px 44px rgba(0, 0, 0, .42), inset 0 0 40px rgba(150, 130, 90, .16);
   }
@@ -904,7 +904,8 @@
   /* ════ 4. АНКЕТА — в стиле минималистичного инвойса ════ */
   .p-form {
     width: 480px;
-    --iv-bg: #edf1e0;
+    /* кремовая бумага, как у приглашения */
+    --iv-bg: #f3ead7;
     --iv-ink: #25352a;
     --iv-mut: #5c6b5b;
     --iv-line: #25352a;
@@ -1570,7 +1571,12 @@
     .tg-plane {
       width: 88px;
       top: 17%;
-      right: 11%;
+      right: 4%;
+    }
+
+    /* подсказку поднимаем выше, чтобы не наезжала на верхние полароиды */
+    #hintPick {
+      top: 3%;
     }
 
     /* анкета на мобильном: во весь экран со скроллом всей карточки,
@@ -1659,10 +1665,8 @@
       <span class="edge edge-l">Билет № ED · 26·09·2026</span>
       <div class="main">
         <div class="brand">
-          <span class="star">★</span>
           <!-- [ПРАВИТЬ] имена пары -->
           <h2>ЕВГЕНИЙ &amp; ДАРЬЯ</h2>
-          <span class="star">★</span>
         </div>
         <!-- [ПРАВИТЬ] площадка · адрес · ссылка на карту -->
         <div class="addr">Агроусадьба «Подсолнух» &nbsp;|&nbsp; деревня Горново, Пинский р-н &nbsp;|&nbsp;
@@ -1922,10 +1926,18 @@
     photo2: { top: '70%', left: '51%', rot: 7 },
     photo3: { top: '24%', left: '66%', rot: 11 }
   };
+  /* на узких экранах раскладываем плотнее и с другими наклонами */
+  if (innerWidth <= 480) Object.assign(PILE, {
+    ticket: { top: '48%', left: '73%', rot: 6 },   /* наклон вправо */
+    sched:  { top: '21%', left: '20%', rot: -7 },  /* левее и выше */
+    dress:  { top: '62%', left: '22%', rot: -5 },  /* левее и выше */
+    photo2: { top: '82%', left: '44%', rot: 6 }    /* нижний полароид — левее и под анкету */
+  });
   /* в куче бумажки мельче на узких экранах, чтобы влезали целиком */
   let PILE_SCALE = innerWidth < 600 ? .4 : .5;
-  /* билет должен лежать поверх полароидов, которые идут позже в DOM */
-  const Z_BOOST = { ticket: 12 };
+  /* билет и анкета должны лежать поверх полароидов, которые идут позже в DOM
+     (в частности нижний полароид выглядывает из-под анкеты) */
+  const Z_BOOST = { ticket: 12, form: 8 };
   papers.forEach((p, i) => { p._z = 10 + i + (Z_BOOST[p.dataset.paper] || 0); p.style.zIndex = p._z; });
 
   /* ── открытие конверта ── */
