@@ -695,7 +695,7 @@
     font-weight: 700;
     font-size: 1.5rem;
     letter-spacing: .03em;
-    color: var(--tk-red);
+    color: #525e66;
     line-height: 1;
   }
 
@@ -904,11 +904,11 @@
   /* ════ 4. АНКЕТА — в стиле минималистичного инвойса ════ */
   .p-form {
     width: 480px;
-    /* кремовая бумага, как у приглашения */
-    --iv-bg: #f3ead7;
-    --iv-ink: #25352a;
-    --iv-mut: #5c6b5b;
-    --iv-line: #25352a;
+    --iv-bg: #eeeae1;
+    --iv-ink: #111;            /* основной текст — чёрный */
+    --iv-mut: #4a4a4a;         /* второстепенный текст — тёмно-серый */
+    --iv-line: #333;           /* линии/рамки */
+    --iv-accent: #493f59;      /* акцент: заголовок и кнопка */
   }
 
   .p-form .sheet {
@@ -963,7 +963,7 @@
     font-size: 3rem;
     letter-spacing: -.035em;
     line-height: .85;
-    color: var(--iv-ink);
+    color: var(--iv-accent);
   }
 
   .p-form .badge {
@@ -1228,7 +1228,7 @@
     font-weight: 700;
     letter-spacing: .14em;
     text-transform: uppercase;
-    background: var(--iv-ink);
+    background: var(--iv-accent);
     color: var(--iv-bg);
     border: none;
     border-radius: 2px;
@@ -1611,8 +1611,8 @@
       right: 20px;
       width: 38px;
       height: 38px;
-      background: rgba(37, 53, 42, .16);
-      color: #25352a;
+      background: rgba(20, 20, 20, .14);
+      color: #111;
       box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
     }
   }
